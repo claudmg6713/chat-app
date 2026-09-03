@@ -108,6 +108,17 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 /* IMAGE */
 .img-bubble{max-width:220px;border-radius:14px;cursor:pointer;display:block;margin-top:4px;}
+.img-caption-inline{font-size:12px;color:#aaa;margin-top:5px;max-width:220px;word-break:break-word;}
+#img-viewer-caption{color:#eee;margin-top:14px;font-size:14px;max-width:90vw;text-align:center;display:none;}
+/* TABS (room modal) */
+.tabrow{display:flex;gap:8px;margin-bottom:16px;}
+.tabbtn{flex:1;padding:10px;background:#1a1a22;border:2px solid #2a2a35;border-radius:12px;color:#888;font-weight:700;font-size:13px;cursor:pointer;}
+.tabbtn.active{border-color:#e8c547;color:#e8c547;background:#e8c54715;}
+/* ACCENT COLOR */
+.accent-wrap{position:relative;margin-left:auto;}
+.accent-swatch-btn{width:32px;height:32px;border-radius:50%;border:2px solid #2a2a35;cursor:pointer;flex-shrink:0;}
+.accent-popover{display:none;position:absolute;top:40px;right:0;background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:8px;z-index:60;flex-wrap:wrap;gap:6px;width:150px;}
+.accent-popover.show{display:flex;}
 /* COLOR */
 .clr-btn{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer;}
 .clr-btn.sel{border-color:#fff;transform:scale(1.15);}
@@ -176,7 +187,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
     </div>
   </div>
   <div class="rlist" id="rlist"></div>
-  <button class="fab" onclick="document.getElementById('mbg').classList.add('show')">＋</button>
+  <button class="fab" onclick="openRoomModal()">＋</button>
 </div>
 
 <!-- CHAT -->
@@ -187,6 +198,19 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
     <div class="chattitle">
       <h3 id="chat-name">Room</h3>
       <div class="oncount" id="oncount"></div>
+    </div>
+    <div class="accent-wrap" id="accent-wrap">
+      <button class="accent-swatch-btn" id="accent-swatch" onclick="toggleAccentPopover(event)" title="Your color (only you see this)" style="background:#e8c547;"></button>
+      <div class="accent-popover" id="accent-popover">
+        <button class="clr-btn" onclick="pickAccentColor('#e8c547')" style="background:#e8c547"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#5b9cf6')" style="background:#5b9cf6"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#34d399')" style="background:#34d399"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#f87171')" style="background:#f87171"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#a78bfa')" style="background:#a78bfa"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#fb923c')" style="background:#fb923c"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#f472b6')" style="background:#f472b6"></button>
+        <button class="clr-btn" onclick="pickAccentColor('#ffffff')" style="background:#ffffff"></button>
+      </div>
     </div>
   </div>
   <div class="pinned-bar hidden" id="pinned-bar" onclick="handlePinTap()">
@@ -213,65 +237,87 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 <!-- NEW ROOM MODAL -->
 <div id="mbg" onclick="if(event.target===this)this.classList.remove('show')">
   <div id="modal" style="background:#151520;border-radius:20px 20px 0 0;padding:22px 20px 40px;width:100%;max-width:480px;max-height:90dvh;overflow-y:auto;">
-    <h3 style="font-size:17px;font-weight:700;margin-bottom:14px;">New Room</h3>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Room name</label>
-      <input class="inp" id="rname-inp" placeholder="e.g. Friends" maxlength="30"/>
+    <div class="tabrow">
+      <button class="tabbtn active" id="tab-create-btn" onclick="switchRoomTab('create')">➕ Create Room</button>
+      <button class="tabbtn" id="tab-join-btn" onclick="switchRoomTab('join')">🔑 Join Room</button>
     </div>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Password (optional)</label>
-      <input class="inp" id="rpw-inp" placeholder="Leave blank for public room" maxlength="30" type="password"/>
-    </div>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Room color</label>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="clr-btn sel" onclick="pickColor(this,'#e8c547')" style="background:#e8c547"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#5b9cf6')" style="background:#5b9cf6"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#34d399')" style="background:#34d399"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#f87171')" style="background:#f87171"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#a78bfa')" style="background:#a78bfa"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#fb923c')" style="background:#fb923c"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#f472b6')" style="background:#f472b6"></button>
-        <button class="clr-btn" onclick="pickColor(this,'#ffffff')" style="background:#ffffff"></button>
+
+    <!-- CREATE TAB -->
+    <div id="tab-create">
+      <div class="field" style="margin-bottom:12px;">
+        <label>Room name</label>
+        <input class="inp" id="rname-inp" placeholder="e.g. Friends" maxlength="30"/>
       </div>
-    </div>
-    <div class="field" style="margin-bottom:14px;">
-      <label>Room emoji</label>
-      <div class="egrid">
-        <button class="emo sel" onclick="pickRoomEmo(this,'💬')">💬</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🎮')">🎮</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🎵')">🎵</button>
-        <button class="emo" onclick="pickRoomEmo(this,'📚')">📚</button>
-        <button class="emo" onclick="pickRoomEmo(this,'⚽')">⚽</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🍕')">🍕</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🔥')">🔥</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🌍')">🌍</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🎉')">🎉</button>
-        <button class="emo" onclick="pickRoomEmo(this,'💡')">💡</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🏆')">🏆</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🎯')">🎯</button>
-        <button class="emo" onclick="pickRoomEmo(this,'😂')">😂</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🧠')">🧠</button>
-        <button class="emo" onclick="pickRoomEmo(this,'🎤')">🎤</button>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Password (optional)</label>
+        <input class="inp" id="rpw-inp" placeholder="Leave blank for public room" maxlength="30" type="password"/>
       </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Room color</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="clr-btn sel" onclick="pickColor(this,'#e8c547')" style="background:#e8c547"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#5b9cf6')" style="background:#5b9cf6"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#34d399')" style="background:#34d399"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#f87171')" style="background:#f87171"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#a78bfa')" style="background:#a78bfa"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#fb923c')" style="background:#fb923c"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#f472b6')" style="background:#f472b6"></button>
+          <button class="clr-btn" onclick="pickColor(this,'#ffffff')" style="background:#ffffff"></button>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label>Room emoji</label>
+        <div class="egrid">
+          <button class="emo sel" onclick="pickRoomEmo(this,'💬')">💬</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🎮')">🎮</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🎵')">🎵</button>
+          <button class="emo" onclick="pickRoomEmo(this,'📚')">📚</button>
+          <button class="emo" onclick="pickRoomEmo(this,'⚽')">⚽</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🍕')">🍕</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🔥')">🔥</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🌍')">🌍</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🎉')">🎉</button>
+          <button class="emo" onclick="pickRoomEmo(this,'💡')">💡</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🏆')">🏆</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🎯')">🎯</button>
+          <button class="emo" onclick="pickRoomEmo(this,'😂')">😂</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🧠')">🧠</button>
+          <button class="emo" onclick="pickRoomEmo(this,'🎤')">🎤</button>
+        </div>
+      </div>
+      <button class="gbtn" onclick="createRoom()" style="margin-bottom:8px;">Create Room</button>
     </div>
-    <button class="gbtn" onclick="createRoom()" style="margin-bottom:8px;">Create Room</button>
-    <button class="gbtn ghost" onclick="document.getElementById('mbg').classList.remove('show')">Cancel</button>
+
+    <!-- JOIN TAB -->
+    <div id="tab-join" style="display:none;">
+      <div class="field" style="margin-bottom:12px;">
+        <label>Room name</label>
+        <input class="inp" id="jrname-inp" placeholder="e.g. Friends" maxlength="30" onkeydown="if(event.key==='Enter')document.getElementById('jrpw-inp').focus()"/>
+      </div>
+      <div class="field" style="margin-bottom:8px;">
+        <label>Password</label>
+        <input class="inp" id="jrpw-inp" placeholder="Leave blank if public" maxlength="30" type="password" onkeydown="if(event.key==='Enter')joinRoomByName()"/>
+        <div class="errmsg" id="jr-err">Room not found or wrong password!</div>
+      </div>
+      <p style="font-size:12px;color:#666;margin-bottom:14px;">Tip: leave the password blank for the public "General" room.</p>
+      <button class="gbtn" onclick="joinRoomByName()" style="margin-bottom:8px;">Join Room</button>
+    </div>
+
+    <button class="gbtn ghost" onclick="closeRoomModal()">Cancel</button>
   </div>
 </div>
 <style>#mbg{display:none;position:fixed;inset:0;background:#000000aa;z-index:100;align-items:flex-end;justify-content:center;}#mbg.show{display:flex;}</style>
 
-<!-- PASSWORD MODAL -->
-<div id="pwbg" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:200;align-items:center;justify-content:center;padding:24px;">
-  <div style="background:#151520;border-radius:20px;padding:24px 20px;width:100%;max-width:340px;">
-    <h3 style="font-size:17px;font-weight:700;margin-bottom:6px;">🔒 Room is private</h3>
-    <p id="pw-room-name" style="font-size:13px;color:#666;margin-bottom:16px;"></p>
-    <div class="field" style="margin-bottom:8px;">
-      <input class="inp" id="pw-inp" placeholder="Enter password" type="password" maxlength="30" onkeydown="if(event.key==='Enter')submitPw()"/>
-      <div class="errmsg" id="pw-err">Wrong password, try again!</div>
+<!-- IMAGE CAPTION MODAL -->
+<div id="imgcap-bg" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:250;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#151520;border-radius:20px;padding:20px;width:100%;max-width:340px;">
+    <img id="imgcap-preview" src="" alt="" style="width:100%;max-height:300px;object-fit:contain;border-radius:14px;margin-bottom:14px;background:#000;"/>
+    <div class="field" style="margin-bottom:14px;">
+      <label>Caption (optional)</label>
+      <input class="inp" id="imgcap-inp" placeholder="Add a caption…" maxlength="200" onkeydown="if(event.key==='Enter')confirmSendImage()"/>
     </div>
-    <button class="gbtn" onclick="submitPw()" style="margin-bottom:8px;">Join Room</button>
-    <button class="gbtn ghost" onclick="document.getElementById('pwbg').style.display='none'">Cancel</button>
+    <button class="gbtn" onclick="confirmSendImage()" style="margin-bottom:8px;">Send</button>
+    <button class="gbtn ghost" onclick="cancelSendImage()">Cancel</button>
   </div>
 </div>
 
@@ -279,6 +325,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 <div id="img-viewer" onclick="if(event.target===this)closeImgViewer()">
   <button id="img-viewer-close" onclick="closeImgViewer()">✕</button>
   <img id="img-viewer-src" src="" alt=""/>
+  <div id="img-viewer-caption"></div>
 </div>
 
 <!-- CONTEXT MENU -->
@@ -292,14 +339,57 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 
 <script>
 window.selEmo=""; window.selRoomEmo="💬"; window.selColor="#e8c547";
-window.pendingRoom=null; window.roomColor="#e8c547"; window.pinnedMsgId=null;
+window.roomColor="#e8c547"; window.pinnedMsgId=null;
 window.replyTo=null; // {id, name, text}
 window.ctxMsg=null;
 window.mediaRecorder=null; window.audioChunks=[];window.isRecording=false;
+window.pendingImageData=null;
+
+// JOINED ROOMS (per-device, local only — decides what shows in the room list)
+// JOINED ROOMS (per-device AND per-user — decides what shows in the room list)
+function joinedKey(){return "joinedRooms_"+(window.me?window.me.id:"anon");}
+function getJoinedRooms(){return JSON.parse(localStorage.getItem(joinedKey())||"[]");}
+function saveJoinedRooms(arr){localStorage.setItem(joinedKey(),JSON.stringify(arr));}
+function isJoined(id){return id==="general"||getJoinedRooms().includes(id);}
+function addJoinedRoom(id){const arr=getJoinedRooms();if(!arr.includes(id)){arr.push(id);saveJoinedRooms(arr);}}
+
+// ROOM MODAL (create / join tabs)
+function openRoomModal(){switchRoomTab('create');document.getElementById('mbg').classList.add('show');}
+function closeRoomModal(){document.getElementById('mbg').classList.remove('show');}
+function switchRoomTab(tab){
+  const isCreate=tab==='create';
+  document.getElementById('tab-create').style.display=isCreate?'block':'none';
+  document.getElementById('tab-join').style.display=isCreate?'none':'block';
+  document.getElementById('tab-create-btn').classList.toggle('active',isCreate);
+  document.getElementById('tab-join-btn').classList.toggle('active',!isCreate);
+  document.getElementById('jr-err')?.classList.remove('show');
+  document.getElementById('jrpw-inp')?.classList.remove('error');
+}
+
+function escAttr(t){return esc(t).replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 
 function pickEmo(btn,e){window.selEmo=e;document.querySelectorAll('#s-auth .egrid .emo').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');validate();}
 function pickRoomEmo(btn,e){window.selRoomEmo=e;document.querySelectorAll('#modal .egrid .emo').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
 function pickColor(btn,c){window.selColor=c;document.querySelectorAll('.clr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+
+// PERSONAL ACCENT COLOR (per user, per room — never shared with roommates)
+function accentKey(){return "roomAccents_"+(window.me?window.me.id:"anon");}
+function toggleAccentPopover(e){e.stopPropagation();document.getElementById('accent-popover').classList.toggle('show');}
+function updateAccentSwatch(){const sw=document.getElementById('accent-swatch');if(sw)sw.style.background=window.roomColor||"#e8c547";}
+window.pickAccentColor=function(color){
+  if(!window.room) return;
+  const stored=JSON.parse(localStorage.getItem(accentKey())||"{}");
+  stored[window.room.id]=color;
+  localStorage.setItem(accentKey(),JSON.stringify(stored));
+  window.roomColor=color;
+  document.querySelectorAll('.mwrap.me .bubble').forEach(b=>b.style.background=color);
+  document.getElementById('accent-popover').classList.remove('show');
+  updateAccentSwatch();
+};
+document.addEventListener('click',(e)=>{
+  const wrap=document.getElementById('accent-wrap');
+  if(wrap&&!wrap.contains(e.target)) document.getElementById('accent-popover')?.classList.remove('show');
+});
 function validate(){document.getElementById('join-btn').disabled=!(document.getElementById('name-inp').value.trim()&&window.selEmo);}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));document.getElementById(id).classList.add('show');}
 function esc(t){const d=document.createElement("div");d.textContent=t||"";return d.innerHTML;}
@@ -419,13 +509,17 @@ async function sendAudio(blob){
   reader.readAsDataURL(blob);
 }
 
-function openImgViewer(src){
+function openImgViewer(src,caption){
   document.getElementById('img-viewer-src').src=src;
+  const capEl=document.getElementById('img-viewer-caption');
+  if(caption){capEl.textContent=caption;capEl.style.display='block';}
+  else{capEl.textContent="";capEl.style.display='none';}
   document.getElementById('img-viewer').classList.add('show');
 }
 function closeImgViewer(){
   document.getElementById('img-viewer').classList.remove('show');
   document.getElementById('img-viewer-src').src="";
+  document.getElementById('img-viewer-caption').style.display='none';
 }
 function fmtDur(s){const m=Math.floor(s/60);const sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec;}
 function buildAudioBubble(audioData, msgId){
@@ -563,52 +657,64 @@ function updateBadges(){
   });
 }
 
+window._allRooms=[];
 function listenRooms(){
   onSnapshot(query(collection(db,"rooms"),orderBy("lastAt","desc")),snap=>{
-
-    const list=document.getElementById('rlist'); list.innerHTML="";
-    snap.forEach(d=>{
-      const r={id:d.id,...d.data()};
-      const hasLock=r.password&&r.password.length>0;
-      const el=document.createElement("div"); el.className="ritem";
-      el.dataset.rid=r.id;
-      const stored=JSON.parse(localStorage.getItem("unread")||"{}");
-      const unread=stored[r.id]||0;
-      el.innerHTML=`<div class="rico">${r.emoji||"💬"}${hasLock?'<span class="lockbadge">🔒</span>':''}</div><div class="rmeta"><div class="rname">${esc(r.name)}</div><div class="rlast">${esc(r.lastMsg||"No messages yet")}</div></div>${(unread>0&&window.currentRoomId!==r.id)?`<div class="rbadge">${unread}</div>`:""}`;
-      el.onclick=()=>tryOpenRoom(r); list.appendChild(el);
-    });
+    window._allRooms=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderRoomList();
   });
 }
 
-window.tryOpenRoom=function(r){
-  if(r.password&&r.password.length>0){
-    window.pendingRoom=r;
-    document.getElementById('pw-room-name').textContent='Password for "'+r.name+'"';
-    document.getElementById('pw-inp').value="";
-    document.getElementById('pw-err').classList.remove('show');
-    document.getElementById('pwbg').style.display='flex';
-  } else openRoom(r);
-};
-window.submitPw=function(){
-  const entered=document.getElementById('pw-inp').value.trim();
-  const r=window.pendingRoom; if(!r) return;
-  if(entered===r.password){document.getElementById('pwbg').style.display='none';openRoom(r);}
-  else{document.getElementById('pw-inp').classList.add('error');document.getElementById('pw-err').classList.add('show');}
+function renderRoomList(){
+  const list=document.getElementById('rlist'); list.innerHTML="";
+  window._allRooms.filter(r=>isJoined(r.id)).forEach(r=>{
+    const el=document.createElement("div"); el.className="ritem";
+    el.dataset.rid=r.id;
+    const stored=JSON.parse(localStorage.getItem("unread")||"{}");
+    const unread=stored[r.id]||0;
+    el.innerHTML=`<div class="rico">${r.emoji||"💬"}</div><div class="rmeta"><div class="rname">${esc(r.name)}</div><div class="rlast">${esc(r.lastMsg||"No messages yet")}</div></div>${(unread>0&&window.currentRoomId!==r.id)?`<div class="rbadge">${unread}</div>`:""}`;
+    el.onclick=()=>openRoom(r); list.appendChild(el);
+  });
+}
+
+// JOIN ROOM BY NAME (used from the "+" menu's Join tab)
+window.joinRoomByName=function(){
+  const n=document.getElementById('jrname-inp').value.trim();
+  const pw=document.getElementById('jrpw-inp').value.trim();
+  const errEl=document.getElementById('jr-err');
+  const pwInp=document.getElementById('jrpw-inp');
+  errEl.classList.remove('show'); pwInp.classList.remove('error');
+  if(!n) return;
+  const match=(window._allRooms||[]).find(r=>r.name.toLowerCase()===n.toLowerCase());
+  if(!match||(match.password||"")!==pw){
+    errEl.classList.add('show'); pwInp.classList.add('error');
+    return;
+  }
+  addJoinedRoom(match.id);
+  document.getElementById('jrname-inp').value="";
+  document.getElementById('jrpw-inp').value="";
+  closeRoomModal();
+  renderRoomList();
+  openRoom(match);
 };
 
 window.createRoom=async()=>{
   const n=document.getElementById('rname-inp').value.trim(); if(!n) return;
   const pw=document.getElementById('rpw-inp').value.trim();
-  await addDoc(collection(db,"rooms"),{name:n,emoji:window.selRoomEmo||"💬",color:window.selColor||"#e8c547",lastMsg:"",lastAt:serverTimestamp(),count:0,password:pw,createdBy:window.me.id});
+  const ref=await addDoc(collection(db,"rooms"),{name:n,emoji:window.selRoomEmo||"💬",color:window.selColor||"#e8c547",lastMsg:"",lastAt:serverTimestamp(),count:0,password:pw,createdBy:window.me.id});
+  addJoinedRoom(ref.id);
   document.getElementById('rname-inp').value=""; document.getElementById('rpw-inp').value="";
-  document.getElementById('mbg').classList.remove('show');
+  closeRoomModal();
+  renderRoomList();
 };
 
 // OPEN ROOM
 function openRoom(r){
   room=r; window.room=r;
   window.currentRoomId=r.id;
-  window.roomColor=r.color||"#e8c547";
+  const accents=JSON.parse(localStorage.getItem(accentKey())||"{}");
+  window.roomColor=accents[r.id]||r.color||"#e8c547";
+  updateAccentSwatch();
   document.getElementById('chat-icon').textContent=r.emoji||"💬";
   document.getElementById('chat-name').textContent=r.name;
   document.getElementById('msgbox').innerHTML="";
@@ -681,7 +787,7 @@ function openRoom(r){
       // Content
       let contentHtml="";
       if(msg.type==="image"){
-        contentHtml=`<img src="${msg.imageData}" class="img-bubble" onclick="openImgViewer('${msg.imageData}')">`;
+        contentHtml=`<img src="${msg.imageData}" data-caption="${escAttr(msg.caption||"")}" class="img-bubble" onclick="openImgViewer(this.src,this.dataset.caption)">${msg.caption?`<div class="img-caption-inline">${esc(msg.caption)}</div>`:""}`;
       } else if(msg.type==="audio"){
         const audioBubble=buildAudioBubble(msg.audioData, msg.id);
         // will append after
@@ -783,17 +889,34 @@ window.sendImage=async function(input){
         quality-=0.1;
         compressed=canvas.toDataURL('image/jpeg',quality);
       }
-      await window._addMsg({
-        type:"image",imageData:compressed,
-        uid:window.me.id,name:window.me.name,emoji:window.me.emoji,
-        replyTo:window.replyTo||null,reactions:{}
-      });
-      cancelReply();
+      // Hold the image and ask for a caption before sending
+      window.pendingImageData=compressed;
+      document.getElementById('imgcap-preview').src=compressed;
+      document.getElementById('imgcap-inp').value="";
+      document.getElementById('imgcap-bg').style.display='flex';
     };
     img.src=e.target.result;
   };
   reader.readAsDataURL(file);
   input.value="";
+};
+
+window.confirmSendImage=async function(){
+  if(!window.pendingImageData||!room) return;
+  const caption=document.getElementById('imgcap-inp').value.trim();
+  const data=window.pendingImageData;
+  window.pendingImageData=null;
+  document.getElementById('imgcap-bg').style.display='none';
+  await window._addMsg({
+    type:"image",imageData:data,caption,
+    uid:window.me.id,name:window.me.name,emoji:window.me.emoji,
+    replyTo:window.replyTo||null,reactions:{}
+  });
+  cancelReply();
+};
+window.cancelSendImage=function(){
+  window.pendingImageData=null;
+  document.getElementById('imgcap-bg').style.display='none';
 };
 
 // SEND TEXT
