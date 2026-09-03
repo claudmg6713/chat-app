@@ -4,6 +4,14 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Chat</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#0d0d0f"/>
+<!-- iOS "Add to Home Screen" support -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Chat"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" href="icon-192.png"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:sans-serif;background:#0d0d0f;color:#e8e8f0;height:100dvh;overflow:hidden;}
@@ -108,6 +116,11 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 /* IMAGE */
 .img-bubble{max-width:220px;border-radius:14px;cursor:pointer;display:block;margin-top:4px;}
+/* ADMIN PANEL */
+.adm-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#1a1a22;border-radius:12px;}
+.adm-item .adm-name{flex:1;font-size:14px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.adm-item .adm-del{background:#f8717122;border:1px solid #f8717155;color:#f87171;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.adm-item .adm-del:disabled{opacity:.3;cursor:default;}
 .img-caption-inline{font-size:12px;color:#aaa;margin-top:5px;max-width:220px;word-break:break-word;}
 #img-viewer-caption{color:#eee;margin-top:14px;font-size:14px;max-width:90vw;text-align:center;display:none;}
 /* TABS (room modal) */
@@ -183,6 +196,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
     <h2><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAFP0lEQVR4nJ1WW2hcVRRde587k3TyLokNrUjqiyTG1FKwIkLTj1IqSP3opGjrh374AEH8UBSE2A8R/LGfVkGtlloytKgf9YXEVq0gSjU2UYtasS8l0eY1yWTmnLP8mHtn7jyCjz0c7rl3zll777Uf5wjqyNjIlmDrvhMWAL7YP7Cms5vbk4ptKrLBA+vo2SoCCGQBkIseMk7IR5f/xIe3P/LtRQDgaNrIcMZVY0v8hSy+i4CnXum/fl27eSxhsKsxKd2BERQcYR3gfbhZgMAAgVF4AsvLfqrg5ejlv5Zf3PzgD2fjeJEOjSsTAUXAn9/qf+q6LvNNV1vwaGCkeylPP5/zLpent44kAAJwHszlyWzOusWc82rQ1dWqD69f03D63JHBpyO8kZGyHomUqYIHX1jTtLWn81Bne+Lu2QUP67wVESMSY0KkZCEk1Bw+fdEWFxgN2psDTM3k35k8p3u2PzGeLTlEQpBJ63uXTwf93cn3u1cnh6bnCgVAApUQPQKOzYmQr5gt0RISFNB2ticTf1yxn/w8P7tjqunWQjqd8YpMWmU44264quHA2s7k0PScy6tookJZ9IwpLqmRSlsAQkARkcTUTL7Q3REMXbOq5eXh4YxDJq0CABMH+3b2dDe8PZu1BUATAMvUleMdelaVaaj+xiLb5f2FtqYgcelPt/OGe797V746sCnR1bH8dVuzDmRz9AIxJbpWUFpCZ/gS8zy2MhLX1Kg6M+8mvpz0m7StZWlH8yq9eWHJE4ApUlPtg8RGiMoieaFlFSur5mZhybE5pQOD13KHJozeExghICUbi7+4uUS94Enpr7hfrFEMkAkDJpNmt4rgtrylANDq/ICwAoxklRH1RIppGjeConkLCQLZrKqy1jpCpOhiBUwdTIK1WRNzqZ4ZIiLWEUKuUwGTXAEjDhRNJaqDqg2R86UuFvYzCfsSi6nboCRyEsOoUUwph3BFq+K2SU3miBTLhEBeHXE+YQRkjI2aJJX/RKOECRVViycYGAHpL6h3/DSZEIjA1yABAHw5cWqTMba2bHGdPPDJQFBw8pkuW7y5lGclEVFQJeYdi1kaJ4Jh7VR00zpkiEByeY/lnHtD++6bOLGY8ydbUqqedBVNsnprbXhqpSoZCLjWlNFsDqdG7/9+TAEwa/0TeQsEKlqKZZxGVp8IjI2yegmpiA5MAjQKWifIW//kPsArR9NmYM/kl9Oz9pnGRvUC+nJtR9RWNfBSP6jX0qIzAxBBYXVrMpi6Yp/r3TvxOUfTRp+dyJCE/HrJ7J/P+nljxJQOu1jvLjUsKY+aIg/3kPAC2s7WRPLydOG1G/eeeSa843h9dmiLQoCedXZXR7Nptw5ONFIlJOEjmmuiWpWpxbW0qxpUW1JBcGHa7u/Z/d0DJBTDGQ+AiqETXgAmVe5n2Q+QdAAl1aiqKgLCErQEnYAOoIPQkbAkLQGkGlRXtyQC6/DL7zNu+Nrd449zBAoptY+iaV+9NtB7dYec8R7qAS8CaW8yOpP1cA6Tquhd3WIUjG5tHhCBisCYIsjcoof3+KZAOTgxnn31zn0/zdW7KgYA0N6Ava0pI1fmbaE1FSQLjphb8Mfnl/B8757xU6df7+vLW39HILIRxHoPdIhQAcwK5DeS3y5aftZ375mvI6JXupfiwIObEueODJzNf7yRV47fwovHBsfOHr5lW83CfyljY1sCsn6JAgB+PNx/z8IHG3np2IaTZ48M3hV9J6Fk8T7JEejY2JaARTAlIeGo+I4VekGFTB666aXzRzc8FFMkHE2b/+vhP8nf1qi8naciUIAAAAAASUVORK5CYII=" style="width:22px;height:18px;object-fit:contain;vertical-align:middle;margin-right:6px;" alt=""/>Chats</h2>
     <div style="display:flex;align-items:center;gap:8px;">
       <div class="chip"><span class="dot"></span><span id="chip-label">You</span></div>
+      <button id="admin-btn" onclick="openAdminPanel()" style="display:none;background:#1a1a22;border:1px solid #2a2a35;border-radius:10px;color:#e8c547;padding:6px 10px;font-size:14px;cursor:pointer;" title="Manage rooms">⚙️</button>
       <button onclick="logout()" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:10px;color:#f87171;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Log out</button>
     </div>
   </div>
@@ -321,6 +335,16 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
   </div>
 </div>
 
+<!-- ADMIN ROOM MANAGEMENT -->
+<div id="admin-bg" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:260;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#151520;border-radius:20px;padding:20px;width:100%;max-width:400px;max-height:80dvh;display:flex;flex-direction:column;">
+    <h3 style="font-size:17px;font-weight:700;margin-bottom:4px;">⚙️ Manage Rooms</h3>
+    <p style="font-size:12px;color:#666;margin-bottom:14px;">All rooms, including ones you haven't joined. Delete unnecessary rooms to keep things tidy.</p>
+    <div id="admin-room-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+    <button class="gbtn ghost" onclick="document.getElementById('admin-bg').style.display='none'">Close</button>
+  </div>
+</div>
+
 <!-- IMAGE VIEWER -->
 <div id="img-viewer" onclick="if(event.target===this)closeImgViewer()">
   <button id="img-viewer-close" onclick="closeImgViewer()">✕</button>
@@ -356,6 +380,23 @@ function addJoinedRoom(id){const arr=getJoinedRooms();if(!arr.includes(id)){arr.
 // ROOM MODAL (create / join tabs)
 function openRoomModal(){switchRoomTab('create');document.getElementById('mbg').classList.add('show');}
 function closeRoomModal(){document.getElementById('mbg').classList.remove('show');}
+
+// ADMIN — room management (visible only to "Clauden")
+window.openAdminPanel=function(){
+  renderAdminRoomList();
+  document.getElementById('admin-bg').style.display='flex';
+};
+function renderAdminRoomList(){
+  const list=document.getElementById('admin-room-list'); if(!list) return;
+  list.innerHTML="";
+  (window._allRooms||[]).forEach(r=>{
+    const isGeneral=r.id==="general";
+    const el=document.createElement('div'); el.className='adm-item';
+    el.innerHTML=`<span>${r.emoji||"💬"}</span><span class="adm-name">${esc(r.name)}${r.password?" 🔒":""}</span><button class="adm-del" ${isGeneral?"disabled title='Cannot delete the public room'":""} onclick="deleteRoomCompletely('${r.id}','${escAttr(r.name)}')">Delete</button>`;
+    list.appendChild(el);
+  });
+  if(!(window._allRooms||[]).length) list.innerHTML='<p style="color:#666;font-size:13px;">No rooms yet.</p>';
+}
 function switchRoomTab(tab){
   const isCreate=tab==='create';
   document.getElementById('tab-create').style.display=isCreate?'block':'none';
@@ -637,6 +678,7 @@ window.joinChat=async()=>{
 
 async function enterApp(){
   document.getElementById('chip-label').textContent=window.me.emoji+" "+window.me.name;
+  document.getElementById('admin-btn').style.display=isAdmin()?'block':'none';
   show('s-rooms'); listenRooms(); startPresence();
   const ref=doc(db,"rooms","general");
   const s=await getDoc(ref);
@@ -675,7 +717,22 @@ function renderRoomList(){
     el.innerHTML=`<div class="rico">${r.emoji||"💬"}</div><div class="rmeta"><div class="rname">${esc(r.name)}</div><div class="rlast">${esc(r.lastMsg||"No messages yet")}</div></div>${(unread>0&&window.currentRoomId!==r.id)?`<div class="rbadge">${unread}</div>`:""}`;
     el.onclick=()=>openRoom(r); list.appendChild(el);
   });
+  // Keep the admin panel's room list in sync if it's currently open
+  if(document.getElementById('admin-bg')?.style.display==='flex') renderAdminRoomList();
 }
+
+// ADMIN — permanently delete a room and all its messages/typing data
+window.deleteRoomCompletely=async function(roomId,roomName){
+  if(roomId==="general") return;
+  if(!confirm('Delete room "'+roomName+'" completely? This cannot be undone.')) return;
+  const msgsSnap=await getDocs(collection(db,"rooms",roomId,"messages"));
+  for(const d of msgsSnap.docs) await deleteDoc(d.ref);
+  const typingSnap=await getDocs(collection(db,"rooms",roomId,"typing"));
+  for(const d of typingSnap.docs) await deleteDoc(d.ref);
+  await deleteDoc(doc(db,"rooms",roomId));
+  // If the deleted room was the one currently open, go back to the room list
+  if(window.currentRoomId===roomId) window.goBack();
+};
 
 // JOIN ROOM BY NAME (used from the "+" menu's Join tab)
 window.joinRoomByName=function(){
@@ -948,6 +1005,14 @@ window.logout=async()=>{
 
 const saved=JSON.parse(localStorage.getItem("cu")||"null");
 if(saved){window.me=saved;enterApp();}else{show('s-auth');}
+
+// Register service worker (enables "Add to Home Screen" install)
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
 </script>
 </body>
 </html>
