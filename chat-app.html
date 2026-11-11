@@ -33,6 +33,30 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 .egrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:340px;}
 .emo{padding:10px 0;border-radius:10px;border:3px solid #2a2a35;background:#1a1a22;font-size:24px;cursor:pointer;text-align:center;line-height:1;}
 .emo.sel{border-color:#e8c547;background:#e8c54725;}
+/* SINGLE EMOJI TRIGGER & WHATSAPP-STYLE PICKER */
+.emo-trigger-row{display:flex;align-items:center;gap:10px;}
+.emo-trigger{width:56px;height:56px;border-radius:16px;border:2px solid #2a2a35;background:#1a1a22;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transition:border-color .15s,background .15s;flex-shrink:0;}
+.emo-trigger.sel{border-color:#e8c547;background:#e8c54720;}
+.emo-trigger .emo-plus{position:absolute;bottom:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:#e8c547;color:#000;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px #0008;}
+.emo-hint{font-size:12px;color:#777;line-height:1.4;}
+.emo-clear{background:#1a1a22;border:1px solid #2a2a35;color:#f87171;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;display:none;}
+.emo-clear.show{display:inline-block;}
+#emo-picker-bg{display:none;position:fixed;inset:0;background:#000000bb;z-index:400;align-items:flex-end;justify-content:center;}
+#emo-picker-bg.show{display:flex;}
+#emo-picker{background:#151520;border-top:1px solid #2a2a35;border-radius:20px 20px 0 0;width:100%;max-width:480px;height:68dvh;max-height:520px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -8px 30px #000a;}
+.ep-header{display:flex;align-items:center;gap:8px;padding:12px 14px 8px;}
+.ep-search{flex:1;padding:9px 12px;background:#1f1f2e;border:1px solid #2e2e40;border-radius:10px;color:#fff;font-size:14px;outline:none;}
+.ep-search:focus{border-color:#e8c547;}
+.ep-close{background:none;border:none;color:#888;font-size:20px;cursor:pointer;padding:4px 8px;}
+.ep-tabs{display:flex;border-bottom:1px solid #252535;padding:0 6px;overflow-x:auto;flex-shrink:0;}
+.ep-tab{flex:1;min-width:40px;background:none;border:none;border-bottom:3px solid transparent;padding:8px 4px;font-size:19px;cursor:pointer;opacity:.55;transition:opacity .15s,border-color .15s;}
+.ep-tab.active{opacity:1;border-bottom-color:#e8c547;}
+.ep-body{flex:1;overflow-y:auto;padding:10px 12px 20px;}
+.ep-cat-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 6px;position:sticky;top:-10px;background:#151520ee;padding:4px 0;z-index:2;}
+.ep-cat-title:first-child{margin-top:0;}
+.ep-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;}
+.ep-item{background:none;border:none;font-size:26px;padding:6px 0;border-radius:8px;cursor:pointer;line-height:1.1;text-align:center;user-select:none;}
+.ep-item:hover,.ep-item:active{background:#252535;}
 .gbtn{width:100%;max-width:340px;padding:14px;background:#e8c547;border:none;border-radius:12px;color:#000;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:30px;}
 .gbtn:disabled{opacity:.3;cursor:default;}
 .gbtn.ghost{background:#1a1a22;color:#888;border:1px solid #2a2a35;margin-bottom:0;}
@@ -117,10 +141,14 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 /* IMAGE */
 .img-bubble{max-width:220px;border-radius:14px;cursor:pointer;display:block;margin-top:4px;}
 /* ADMIN PANEL */
-.adm-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#1a1a22;border-radius:12px;}
+.adm-item{display:flex;flex-direction:column;gap:8px;padding:10px 12px;background:#1a1a22;border-radius:12px;}
+.adm-item-top{display:flex;align-items:center;gap:10px;width:100%;}
 .adm-item .adm-name{flex:1;font-size:14px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .adm-item .adm-del{background:#f8717122;border:1px solid #f8717155;color:#f87171;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;}
 .adm-item .adm-del:disabled{opacity:.3;cursor:default;}
+.adm-kicked-list{display:flex;flex-direction:column;gap:6px;border-top:1px solid #2a2a35;padding-top:8px;width:100%;}
+.adm-kicked-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:#ccc;background:#14141c;padding:6px 10px;border-radius:8px;}
+.adm-allow-btn{background:#34d39922;border:1px solid #34d39966;color:#34d399;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;}
 .img-caption-inline{font-size:12px;color:#aaa;margin-top:5px;max-width:220px;word-break:break-word;}
 #img-viewer-caption{color:#eee;margin-top:14px;font-size:14px;max-width:90vw;text-align:center;display:none;}
 /* TABS (room modal) */
@@ -156,35 +184,23 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 <div id="s-auth" class="screen show">
   <div class="logo"><img src="data:image/png;base64,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" style="width:50px;height:40px;object-fit:contain;" alt=""/></div>
   <h1>Welcome to Chat</h1>
-  <p>Pick a name and emoji to join</p>
+  <p>Pick a name and optional emoji to join</p>
   <div class="field">
     <label>Your name</label>
     <input class="inp" id="name-inp" placeholder="e.g. Clauden" maxlength="20" oninput="validate()"/>
     <div class="errmsg" id="name-err">This name is already taken, pick another!</div>
   </div>
   <div class="field">
-    <label>Pick your emoji</label>
-    <div class="egrid">
-      <button class="emo" onclick="pickEmo(this,'😎')">😎</button>
-      <button class="emo" onclick="pickEmo(this,'🦁')">🦁</button>
-      <button class="emo" onclick="pickEmo(this,'🐯')">🐯</button>
-      <button class="emo" onclick="pickEmo(this,'🦊')">🦊</button>
-      <button class="emo" onclick="pickEmo(this,'🐼')">🐼</button>
-      <button class="emo" onclick="pickEmo(this,'🐸')">🐸</button>
-      <button class="emo" onclick="pickEmo(this,'🦋')">🦋</button>
-      <button class="emo" onclick="pickEmo(this,'🌟')">🌟</button>
-      <button class="emo" onclick="pickEmo(this,'🔥')">🔥</button>
-      <button class="emo" onclick="pickEmo(this,'⚡')">⚡</button>
-      <button class="emo" onclick="pickEmo(this,'🎯')">🎯</button>
-      <button class="emo" onclick="pickEmo(this,'🏆')">🏆</button>
-      <button class="emo" onclick="pickEmo(this,'🎮')">🎮</button>
-      <button class="emo" onclick="pickEmo(this,'🎸')">🎸</button>
-      <button class="emo" onclick="pickEmo(this,'🚀')">🚀</button>
-      <button class="emo" onclick="pickEmo(this,'💎')">💎</button>
-      <button class="emo" onclick="pickEmo(this,'🦄')">🦄</button>
-      <button class="emo" onclick="pickEmo(this,'🦅')">🦅</button>
-      <button class="emo" onclick="pickEmo(this,'🐉')">🐉</button>
-      <button class="emo" onclick="pickEmo(this,'🍀')">🍀</button>
+    <label>Your emoji <span style="color:#555;font-weight:400;text-transform:none;">(optional)</span></label>
+    <div class="emo-trigger-row">
+      <button type="button" class="emo-trigger" id="auth-emo-btn" onclick="openEmojiPicker('auth')" title="Choose emoji">
+        <span id="auth-emo-val">😊</span>
+        <span class="emo-plus">＋</span>
+      </button>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+        <span class="emo-hint" id="auth-emo-hint">No emoji selected (tap icon to choose)</span>
+        <button type="button" class="emo-clear" id="auth-emo-clear" onclick="clearAuthEmoji()">✕ Remove emoji</button>
+      </div>
     </div>
   </div>
   <button class="gbtn" id="join-btn" disabled onclick="joinChat()">Enter Chat 🚀</button>
@@ -195,8 +211,9 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
   <div class="topbar">
     <h2><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAFP0lEQVR4nJ1WW2hcVRRde587k3TyLokNrUjqiyTG1FKwIkLTj1IqSP3opGjrh374AEH8UBSE2A8R/LGfVkGtlloytKgf9YXEVq0gSjU2UYtasS8l0eY1yWTmnLP8mHtn7jyCjz0c7rl3zll777Uf5wjqyNjIlmDrvhMWAL7YP7Cms5vbk4ptKrLBA+vo2SoCCGQBkIseMk7IR5f/xIe3P/LtRQDgaNrIcMZVY0v8hSy+i4CnXum/fl27eSxhsKsxKd2BERQcYR3gfbhZgMAAgVF4AsvLfqrg5ejlv5Zf3PzgD2fjeJEOjSsTAUXAn9/qf+q6LvNNV1vwaGCkeylPP5/zLpent44kAAJwHszlyWzOusWc82rQ1dWqD69f03D63JHBpyO8kZGyHomUqYIHX1jTtLWn81Bne+Lu2QUP67wVESMSY0KkZCEk1Bw+fdEWFxgN2psDTM3k35k8p3u2PzGeLTlEQpBJ63uXTwf93cn3u1cnh6bnCgVAApUQPQKOzYmQr5gt0RISFNB2ticTf1yxn/w8P7tjqunWQjqd8YpMWmU44264quHA2s7k0PScy6tookJZ9IwpLqmRSlsAQkARkcTUTL7Q3REMXbOq5eXh4YxDJq0CABMH+3b2dDe8PZu1BUATAMvUleMdelaVaaj+xiLb5f2FtqYgcelPt/OGe797V746sCnR1bH8dVuzDmRz9AIxJbpWUFpCZ/gS8zy2MhLX1Kg6M+8mvpz0m7StZWlH8yq9eWHJE4ApUlPtg8RGiMoieaFlFSur5mZhybE5pQOD13KHJozeExghICUbi7+4uUS94Enpr7hfrFEMkAkDJpNmt4rgtrylANDq/ICwAoxklRH1RIppGjeConkLCQLZrKqy1jpCpOhiBUwdTIK1WRNzqZ4ZIiLWEUKuUwGTXAEjDhRNJaqDqg2R86UuFvYzCfsSi6nboCRyEsOoUUwph3BFq+K2SU3miBTLhEBeHXE+YQRkjI2aJJX/RKOECRVViycYGAHpL6h3/DSZEIjA1yABAHw5cWqTMba2bHGdPPDJQFBw8pkuW7y5lGclEVFQJeYdi1kaJ4Jh7VR00zpkiEByeY/lnHtD++6bOLGY8ydbUqqedBVNsnprbXhqpSoZCLjWlNFsDqdG7/9+TAEwa/0TeQsEKlqKZZxGVp8IjI2yegmpiA5MAjQKWifIW//kPsArR9NmYM/kl9Oz9pnGRvUC+nJtR9RWNfBSP6jX0qIzAxBBYXVrMpi6Yp/r3TvxOUfTRp+dyJCE/HrJ7J/P+nljxJQOu1jvLjUsKY+aIg/3kPAC2s7WRPLydOG1G/eeeSa843h9dmiLQoCedXZXR7Nptw5ONFIlJOEjmmuiWpWpxbW0qxpUW1JBcGHa7u/Z/d0DJBTDGQ+AiqETXgAmVe5n2Q+QdAAl1aiqKgLCErQEnYAOoIPQkbAkLQGkGlRXtyQC6/DL7zNu+Nrd449zBAoptY+iaV+9NtB7dYec8R7qAS8CaW8yOpP1cA6Tquhd3WIUjG5tHhCBisCYIsjcoof3+KZAOTgxnn31zn0/zdW7KgYA0N6Ava0pI1fmbaE1FSQLjphb8Mfnl/B8757xU6df7+vLW39HILIRxHoPdIhQAcwK5DeS3y5aftZ375mvI6JXupfiwIObEueODJzNf7yRV47fwovHBsfOHr5lW83CfyljY1sCsn6JAgB+PNx/z8IHG3np2IaTZ48M3hV9J6Fk8T7JEejY2JaARTAlIeGo+I4VekGFTB666aXzRzc8FFMkHE2b/+vhP8nf1qi8naciUIAAAAAASUVORK5CYII=" style="width:22px;height:18px;object-fit:contain;vertical-align:middle;margin-right:6px;" alt=""/>Chats</h2>
     <div style="display:flex;align-items:center;gap:8px;">
+      <button id="notif-btn" onclick="toggleNotifications()" title="Toggle notifications" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:10px;color:#e8e8f0;padding:6px 10px;font-size:14px;cursor:pointer;">🔔</button>
       <div class="chip"><span class="dot"></span><span id="chip-label">You</span></div>
-      <button id="admin-btn" onclick="openAdminPanel()" style="display:none;background:#1a1a22;border:1px solid #2a2a35;border-radius:10px;color:#e8c547;padding:6px 10px;font-size:14px;cursor:pointer;" title="Manage rooms">⚙️</button>
+      <button id="admin-btn" onclick="openAdminPanel()" style="display:none;background:#1a1a22;border:1px solid #2a2a35;border-radius:10px;color:#e8c547;padding:6px 10px;font-size:14px;cursor:pointer;position:relative;" title="Manage rooms">⚙️</button>
       <button onclick="logout()" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:10px;color:#f87171;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Log out</button>
     </div>
   </div>
@@ -259,8 +276,8 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
     <!-- CREATE TAB -->
     <div id="tab-create">
       <div class="field" style="margin-bottom:12px;">
-        <label>Room name</label>
-        <input class="inp" id="rname-inp" placeholder="e.g. Friends" maxlength="30"/>
+        <label>Room name <span style="color:#f87171;">*</span></label>
+        <input class="inp" id="rname-inp" placeholder="e.g. Friends" maxlength="30" oninput="validateRoom()"/>
       </div>
       <div class="field" style="margin-bottom:12px;">
         <label>Password (optional)</label>
@@ -279,27 +296,17 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
           <button class="clr-btn" onclick="pickColor(this,'#ffffff')" style="background:#ffffff"></button>
         </div>
       </div>
-      <div class="field" style="margin-bottom:14px;">
-        <label>Room emoji</label>
-        <div class="egrid">
-          <button class="emo sel" onclick="pickRoomEmo(this,'💬')">💬</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🎮')">🎮</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🎵')">🎵</button>
-          <button class="emo" onclick="pickRoomEmo(this,'📚')">📚</button>
-          <button class="emo" onclick="pickRoomEmo(this,'⚽')">⚽</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🍕')">🍕</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🔥')">🔥</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🌍')">🌍</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🎉')">🎉</button>
-          <button class="emo" onclick="pickRoomEmo(this,'💡')">💡</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🏆')">🏆</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🎯')">🎯</button>
-          <button class="emo" onclick="pickRoomEmo(this,'😂')">😂</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🧠')">🧠</button>
-          <button class="emo" onclick="pickRoomEmo(this,'🎤')">🎤</button>
+      <div class="field" style="margin-bottom:18px;">
+        <label>Room emoji <span style="color:#f87171;">*</span></label>
+        <div class="emo-trigger-row">
+          <button type="button" class="emo-trigger" id="room-emo-btn" onclick="openEmojiPicker('room')" title="Choose room emoji">
+            <span id="room-emo-val" style="opacity:.45">😊</span>
+            <span class="emo-plus">＋</span>
+          </button>
+          <span class="emo-hint" id="room-emo-hint">Tap icon to select a room emoji (required)</span>
         </div>
       </div>
-      <button class="gbtn" onclick="createRoom()" style="margin-bottom:8px;">Create Room</button>
+      <button class="gbtn" id="create-room-btn" disabled onclick="createRoom()" style="margin-bottom:8px;">Create Room</button>
     </div>
 
     <!-- JOIN TAB -->
@@ -322,6 +329,18 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 </div>
 <style>#mbg{display:none;position:fixed;inset:0;background:#000000aa;z-index:100;align-items:flex-end;justify-content:center;}#mbg.show{display:flex;}</style>
 
+<!-- WHATSAPP-STYLE EMOJI PICKER MODAL -->
+<div id="emo-picker-bg" onclick="if(event.target===this)closeEmojiPicker()">
+  <div id="emo-picker">
+    <div class="ep-header">
+      <input class="ep-search" id="ep-search" placeholder="🔍 Search emojis (e.g. smile, fire, heart, cat)…" oninput="renderEmojiGrid()"/>
+      <button type="button" class="ep-close" onclick="closeEmojiPicker()">✕</button>
+    </div>
+    <div class="ep-tabs" id="ep-tabs"></div>
+    <div class="ep-body" id="ep-body"></div>
+  </div>
+</div>
+
 <!-- IMAGE CAPTION MODAL -->
 <div id="imgcap-bg" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:250;align-items:center;justify-content:center;padding:24px;">
   <div style="background:#151520;border-radius:20px;padding:20px;width:100%;max-width:340px;">
@@ -337,9 +356,9 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 
 <!-- ADMIN ROOM MANAGEMENT -->
 <div id="admin-bg" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:260;align-items:center;justify-content:center;padding:24px;">
-  <div style="background:#151520;border-radius:20px;padding:20px;width:100%;max-width:400px;max-height:80dvh;display:flex;flex-direction:column;">
+  <div style="background:#151520;border-radius:20px;padding:20px;width:100%;max-width:420px;max-height:80dvh;display:flex;flex-direction:column;">
     <h3 style="font-size:17px;font-weight:700;margin-bottom:4px;">⚙️ Manage Rooms</h3>
-    <p style="font-size:12px;color:#666;margin-bottom:14px;">All rooms, including ones you haven't joined. Delete unnecessary rooms to keep things tidy.</p>
+    <p style="font-size:12px;color:#666;margin-bottom:14px;">All rooms, including ones you haven't joined. Delete unnecessary rooms or grant kicked users permission to rejoin.</p>
     <div id="admin-room-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
     <button class="gbtn ghost" onclick="document.getElementById('admin-bg').style.display='none'">Close</button>
   </div>
@@ -362,24 +381,125 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100
 </div>
 
 <script>
-window.selEmo=""; window.selRoomEmo="💬"; window.selColor="#e8c547";
-window.roomColor="#e8c547"; window.pinnedMsgId=null;
+window.selEmo=""; window.selRoomEmo=""; window.selColor="#e8c547";
+window.pendingRoom=null; window.roomColor="#e8c547"; window.pinnedMsgId=null;
 window.replyTo=null; // {id, name, text}
 window.ctxMsg=null;
 window.mediaRecorder=null; window.audioChunks=[];window.isRecording=false;
-window.pendingImageData=null;
+window.emoTarget="auth"; // 'auth' | 'room'
+window.activeEmoCat="smileys";
 
-// JOINED ROOMS (per-device, local only — decides what shows in the room list)
-// JOINED ROOMS (per-device AND per-user — decides what shows in the room list)
+const splitEmojis=s=>typeof Intl!=="undefined"&&Intl.Segmenter?Array.from(new Intl.Segmenter().segment(s),x=>x.segment):[...s];
+const EMOJI_CATEGORIES=[
+  {id:"recent",icon:"🕒",label:"Recent",emojis:[]},
+  {id:"smileys",icon:"😀",label:"Smileys & People",keywords:"smile happy laugh joy wink love cool kiss cry sad angry party nerd angel devil skull ghost alien robot wave clap pray muscle",emojis:splitEmojis("😀😃😄😁😆😅🤣😂🙂🙃😉😊😇🥰😍🤩😘😗☺️😚😙🥲😋😛😜🤪😝🤑🤗🤭🫢🫣🤫🤔🫡🤐🤨😐😑😶🫥😏😒🙄😬😮‍💨🤥😌😔😪🤤😴😷🤒🤕🤢🤮🤧🥵🥶🥴😵😵‍💫🤯🤠🥳🥸😎🤓🧐😕🫤😟🙁☹️😮😯😲😳🥺🥹😦😧😨😰😥😢😭😱😖😣😞😓😩😫🥱😤😡😠🤬😈👿💀☠️💩🤡👹👺👻👽👾🤖👋🤚🖐️✋🖖🫱🫲🫳🫴👌🤌🤏✌️🤞🫰🤟🤘🤙👈👉👆🖕👇☝️🫵👍👎✊👊🤛🤜👏🙌🫶👐🤲🤝🙏✍️💅🤳💪🦾🦵🦶👂🦻👃🧠🫀🫁🦷🦴👀👁️👅👄🫦👶🧒👦👧🧑👱👨🧔👩🧓👴👵👲👳🧕👮👷💂🕵️👩‍⚕️👨‍🌾👩‍🍳👨‍🎓👩‍🎤👨‍🏫👩‍🏭👨‍💻👩‍💼👨‍🔧👩‍🔬👨‍🎨👩‍🚒👨‍✈️👩‍🚀👨‍⚖️👰🤵👸🤴🥷🦸🦹🧙🧚🧛🧜🧝🧞🧟🧌")},
+  {id:"animals",icon:"🐻",label:"Animals & Nature",keywords:"animal dog cat lion tiger fox bear panda frog monkey bird eagle dragon unicorn bee butterfly flower tree sun moon star fire water",emojis:splitEmojis("🐶🐱🐭🐹🐰🦊🐻🐼🐻‍❄️🐨🐯🦁🐮🐷🐽🐸🐵🙈🙉🙊🐒🐔🐧🐦🐤🐣🐥🦆🦅🦉🦇🐺🐗🐴🦄🐝🪱🐛🦋🐌🐞🐜🪰🪲🪳🦟🦗🕷️🕸️🦂🐢🐍🦎🦖🦕🐙🦑🦐🦞🦀🐡🐠🐟🐬🐳🐋🦈🦭🐊🐅🐆🦓🦍🦧🦣🐘🦛🦏🐪🐫🦒🦘🦬🐃🐂🐄🐎🐖🐏🐑🦙🐐🦌🐕🐩🦮🐕‍🦺🐈🐈‍⬛🪶🐓🦃🦤🦚🦜🦢🦩🕊️🐇🦝🦨🦡🦫🦦🦥🐁🐀🐿️🦔🐾🐉🐲🌵🎄🌲🌳🌴🪵🌱🌿☘️🍀🎍🪴🎋🍃🍂🍁🪺🪹🍄🐚🪸🌾💐🌷🌹🥀🪷🌺🌸🌼🌻🌞🌝🌛🌜🌚🌕🌖🌗🌘🌑🌒🌓🌔🌙🌎🌍🌏🪐💫⭐🌟✨⚡☄️💥🔥🌪️🌈☀️🌤️⛅🌥️☁️🌦️🌧️⛈️🌩️🌨️❄️☃️⛄🌬️💨💧💦🫧☔☂️🌊🌫️")},
+  {id:"food",icon:"🍔",label:"Food & Drink",keywords:"food fruit apple pizza burger taco sushi cake coffee tea beer wine drink sweet icecream chocolate",emojis:splitEmojis("🍏🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🫑🌽🥕🫒🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🧈🥞🧇🥓🥩🍗🍖🦴🌭🍔🍟🍕🫓🥪🥙🧆🌮🌯🫔🥗🥘🫕🥫🍝🍜🍲🍛🍣🍱🥟🦪🍤🍙🍚🍘🍥🥠🥮🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🍩🍪🌰🥜🫘🍯🥛🍼🫖☕🍵🧃🥤🧋🍶🍺🍻🥂🍷🥃🍸🍹🧉🍾🧊🥄🍴🍽️🥣🥡🥢🧂")},
+  {id:"activity",icon:"⚽",label:"Activities & Sports",keywords:"sport soccer football basketball game trophy medal music guitar mic art party gift",emojis:splitEmojis("⚽🏀🏈⚾🥎🎾🏐🏉🥏🎱🪀🏓🏸🏒🏑🥍🏏🪃🥅⛳🪁🏹🎣🤿🥊🥋🎽🛹🛼🛷⛸️🥌🎿⛷️🏂🪂🏋️🤼🤸⛹️🤺🤾🏌️🏇🧘🏄🏊🤽🚣🧗🚵🚴🏆🥇🥈🥉🏅🎖️🏵️🎗️🎫🎟️🎪🤹🎭🩰🎨🎬🎤🎧🎼🎹🥁🪘🎷🎺🪗🎸🪕🎻🎲♟️🎯🎳🎮🕹️🎰🧩")},
+  {id:"travel",icon:"🚗",label:"Travel & Places",keywords:"car plane rocket train ship house beach mountain world mapcamping",emojis:splitEmojis("🚗🚕🚙🚌🚎🏎️🚓🚑🚒🚐🛻🚚🚛🚜🦯🦽🦼🛴🚲🛵🏍️🛺🚨🚔🚍🚘🚖🛞🚡🚠🚟🚃🚋🚞🚝🚄🚅🚈🚂🚆🚇🚊🚉✈️🛫🛬🛩️💺🛰️🚀🛸🚁🛶⛵🚤🛥️🛳️⛴️🚢⚓🪝⛽🚧🚦🚥🚏🗺️🗿🗽🗼🏰🏯🏟️🎡🎢🎠⛲⛱️🏖️🏝️🏜️🌋⛰️🏔️🗻🏕️⛺🛖🏠🏡🏘️🏚️🏗️🏭🏢🏬🏣🏤🏥🏦🏨🏪🏫🏩💒🏛️⛪🕌🕍🛕🕋⛩️🛤️🛣️🗾🎑🏞️🌅🌄🌠🎇🎆🌇🌆🏙️🌃🌌🌉🌁")},
+  {id:"objects",icon:"💡",label:"Objects",keywords:"phone computer book money diamond crown key lock bell gift balloon heart light tool",emojis:splitEmojis("⌚📱📲💻⌨️🖥️🖨️🖱️🖲️🕹️🗜️💽💾💿📀📼📷📸📹🎥📽️🎞️📞☎️📟📠📺📻🎙️🎚️🎛️🧭⏱️⏲️⏰🕰️⌛⏳📡🔋🪫🔌💡🔦🕯️🪔🧯🛢️💸💵💴💶💷🪙💰💳💎⚖️🪜🧰🪛🔧🔨⚒️🛠️⛏️🪚🔩⚙️🪤🧱⛓️🧲🔫💣🧨🪓🔪🗡️⚔️🛡️🚬⚰️🪦⚱️🏺🔮📿🧿🪬💈⚗️🔭🔬🕳️🩹🩺🩻💊💉🩸🧬🦠🧫🧪🌡️🧹🪠🧺🧻🚽🚰🚿🛁🛀🧼🪥🪒🧽🪣🧴🛎️🔑🗝️🚪🪑🛋️🛏️🛌🧸🪆🖼️🪞🪟🛍️🛒🎁🎈🎏🎀🪄🪅🎊🎉🎎🏮🎐🧧✉️📩📨📧💌📥📤📦🏷️🪧📪📫📬📭📮📯📜📃📄📑🧾📊📈📉🗒️🗓️📆📅🗑️📇🗃️🗳️🗄️📋📁📂🗂️🗞️📰📓📔📒📕📗📘📙📚📖🔖🧷🔗📎🖇️📐📏🧮📌📍✂️🖊️🖋️✒️🖌️🖍️📝✏️🔍🔎🔏🔐🔒🔓")},
+  {id:"symbols",icon:"❤️",label:"Symbols & Flags",keywords:"heart love check cross warning star peace flag",emojis:splitEmojis("❤️🩷🧡💛💚💙🩵💜🖤🩶🤍🤎💔❣️💕💞💓💗💖💘💝💟☮️✝️☪️🕉️☸️✡️🔯🕎☯️☦️🛐⛎♈♉♊♋♌♍♎♏♐♑♒♓🆔⚛️🉑☢️☣️📴📳🈶🈚🈸🈺🈷️✴️🆚💮🉐㊙️㊗️🈴🈵🈹🈲🅰️🅱️🆎🆑🅾️🆘❌⭕🛑⛔📛🚫💯💢♨️🚷🚯🚳🚱🔞📵🚭❗️❕❓❔‼️⁉️🔅🔆〽️⚠️🚸🔱⚜️🔰♻️✅🈯💹❇️✳️❎🌐💠Ⓜ️🌀💤🏧🚾♿🅿️🛗🈳🈂️🛂🛃🛄🛅🚹🚺🚼⚧️🚻🚮🎦📶🈁🔣ℹ️🔤🔡🔠🆖🆗🆙🆒🆕🆓0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣🔟🔢#️⃣*️⃣⏏️▶️⏸️⏯️⏹️⏺️⏭️⏮️⏩⏪⏫⏬◀️🔼🔽➡️⬅️⬆️⬇️↗️↘️↙️↖️↕️↔️↪️↩️⤴️⤵️🔀🔁🔂🔄🔃🎵🎶➕➖➗✖️♾️💲💱™️©️®️〰️➰➿🔚🔙🔛🔝🔜✔️☑️🔘🔴🟠🟡🟢🔵🟣⚫⚪🟤🔺🔻🔸🔹🔶🔷🔳🔲▪️▫️◾◽◼️◻️🟥🟧🟨🟩🟦🟪⬛⬜🟫🔈🔇🔉🔊🔔🔕📣📢💬💭🗯️♠️♣️♥️♦️🃏🎴🀄🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚🕛🏳️🏴🏁🚩🏳️‍🌈🏳️‍⚧️🏴‍☠️")}
+];
+
+function getRecentEmojis(){
+  try{return JSON.parse(localStorage.getItem("recent_emojis")||"[]");}catch(e){return[];}
+}
+function saveRecentEmoji(e){
+  const list=getRecentEmojis().filter(x=>x!==e);
+  list.unshift(e);
+  localStorage.setItem("recent_emojis",JSON.stringify(list.slice(0,32)));
+}
+
+function updateAuthEmoUI(){
+  const btn=document.getElementById('auth-emo-btn');
+  const val=document.getElementById('auth-emo-val');
+  const hint=document.getElementById('auth-emo-hint');
+  const clr=document.getElementById('auth-emo-clear');
+  if(window.selEmo){
+    btn.classList.add('sel');
+    val.textContent=window.selEmo;
+    val.style.opacity="1";
+    hint.textContent="Selected emoji: "+window.selEmo+" (tap to change)";
+    clr.classList.add('show');
+  } else {
+    btn.classList.remove('sel');
+    val.textContent="😊";
+    val.style.opacity=".45";
+    hint.textContent="No emoji selected (tap icon to choose)";
+    clr.classList.remove('show');
+  }
+}
+function clearAuthEmoji(){
+  window.selEmo="";
+  updateAuthEmoUI();
+  validate();
+}
+
+function updateRoomEmoUI(){
+  const btn=document.getElementById('room-emo-btn');
+  const val=document.getElementById('room-emo-val');
+  const hint=document.getElementById('room-emo-hint');
+  if(window.selRoomEmo){
+    btn.classList.add('sel');
+    val.textContent=window.selRoomEmo;
+    val.style.opacity="1";
+    hint.textContent="Selected room emoji: "+window.selRoomEmo+" (tap to change)";
+  } else {
+    btn.classList.remove('sel');
+    val.textContent="😊";
+    val.style.opacity=".45";
+    hint.textContent="Tap icon to select a room emoji (required)";
+  }
+}
+
+function openRoomModal(){
+  window.selRoomEmo="";
+  document.getElementById('rname-inp').value="";
+  document.getElementById('rpw-inp').value="";
+  document.getElementById('jrname-inp').value="";
+  document.getElementById('jrpw-inp').value="";
+  updateRoomEmoUI();
+  validateRoom();
+  switchRoomTab('create');
+  document.getElementById('mbg').classList.add('show');
+}
+function closeRoomModal(){document.getElementById('mbg').classList.remove('show');}
+
+function switchRoomTab(tab){
+  const isCreate=tab==='create';
+  document.getElementById('tab-create').style.display=isCreate?'block':'none';
+  document.getElementById('tab-join').style.display=isCreate?'none':'block';
+  document.getElementById('tab-create-btn').classList.toggle('active',isCreate);
+  document.getElementById('tab-join-btn').classList.toggle('active',!isCreate);
+  const errEl=document.getElementById('jr-err');
+  if(errEl){errEl.classList.remove('show');errEl.textContent="Room not found or wrong password!";}
+  document.getElementById('jrpw-inp')?.classList.remove('error');
+}
+
+function escAttr(t){return esc(t).replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+
+// JOINED ROOMS (per-device AND per-user, plus synced with Firestore members/kickedUsers)
 function joinedKey(){return "joinedRooms_"+(window.me?window.me.id:"anon");}
 function getJoinedRooms(){return JSON.parse(localStorage.getItem(joinedKey())||"[]");}
 function saveJoinedRooms(arr){localStorage.setItem(joinedKey(),JSON.stringify(arr));}
-function isJoined(id){return id==="general"||getJoinedRooms().includes(id);}
 function addJoinedRoom(id){const arr=getJoinedRooms();if(!arr.includes(id)){arr.push(id);saveJoinedRooms(arr);}}
-
-// ROOM MODAL (create / join tabs)
-function openRoomModal(){switchRoomTab('create');document.getElementById('mbg').classList.add('show');}
-function closeRoomModal(){document.getElementById('mbg').classList.remove('show');}
+function removeJoinedRoom(id){const arr=getJoinedRooms().filter(x=>x!==id);saveJoinedRooms(arr);}
+function isUserKickedFromRoom(r){
+  if(!r||!window.me) return false;
+  return !!(r.kickedUsers && r.kickedUsers[window.me.id]);
+}
+function isJoined(rOrId){
+  const r=typeof rOrId==="object"?rOrId:(window._allRooms||[]).find(x=>x.id===rOrId);
+  const id=typeof rOrId==="object"?rOrId.id:rOrId;
+  if(r && isUserKickedFromRoom(r)) return false;
+  if(id==="general") return true;
+  if(getJoinedRooms().includes(id)) return true;
+  if(r && window.me && (r.createdBy===window.me.id || (Array.isArray(r.members)&&r.members.includes(window.me.id)))){
+    addJoinedRoom(id);
+    return true;
+  }
+  return false;
+}
 
 // ADMIN — room management (visible only to "Clauden")
 window.openAdminPanel=function(){
@@ -389,29 +509,44 @@ window.openAdminPanel=function(){
 function renderAdminRoomList(){
   const list=document.getElementById('admin-room-list'); if(!list) return;
   list.innerHTML="";
+  let totalRequests=0;
   (window._allRooms||[]).forEach(r=>{
     const isGeneral=r.id==="general";
+    const kicked=r.kickedUsers||{};
+    const reqs=r.rejoinRequests||{};
+    const kickedEntries=Object.entries(kicked);
+    totalRequests+=Object.keys(reqs).length;
+
     const el=document.createElement('div'); el.className='adm-item';
-    el.innerHTML=`<span>${r.emoji||"💬"}</span><span class="adm-name">${esc(r.name)}${r.password?" 🔒":""}</span><button class="adm-del" ${isGeneral?"disabled title='Cannot delete the public room'":""} onclick="deleteRoomCompletely('${r.id}','${escAttr(r.name)}')">Delete</button>`;
+    let kickedHtml="";
+    if(kickedEntries.length>0){
+      kickedHtml='<div class="adm-kicked-list">';
+      kickedEntries.forEach(([uid,uname])=>{
+        const hasRequested=!!reqs[uid];
+        kickedHtml+=`<div class="adm-kicked-row">
+          <span>👢 <b>${esc(uname)}</b> ${hasRequested?'<span style="color:#e8c547;font-weight:700;">(Requested to rejoin)</span>':'<span style="color:#777;">(Kicked)</span>'}</span>
+          <button class="adm-allow-btn" onclick="approveRejoin('${r.id}','${escAttr(uid)}','${escAttr(uname)}')">✓ Allow back</button>
+        </div>`;
+      });
+      kickedHtml+='</div>';
+    }
+
+    el.innerHTML=`
+      <div class="adm-item-top">
+        <span>${r.emoji||"💬"}</span>
+        <span class="adm-name">${esc(r.name)}${r.password?" 🔒":""}</span>
+        <button class="adm-del" ${isGeneral?"disabled title='Cannot delete the public room'":""} onclick="deleteRoomCompletely('${r.id}','${escAttr(r.name)}')">Delete</button>
+      </div>
+      ${kickedHtml}
+    `;
     list.appendChild(el);
   });
   if(!(window._allRooms||[]).length) list.innerHTML='<p style="color:#666;font-size:13px;">No rooms yet.</p>';
+  const admBtn=document.getElementById('admin-btn');
+  if(admBtn){
+    admBtn.textContent=totalRequests>0?`⚙️ ${totalRequests}`:"⚙️";
+  }
 }
-function switchRoomTab(tab){
-  const isCreate=tab==='create';
-  document.getElementById('tab-create').style.display=isCreate?'block':'none';
-  document.getElementById('tab-join').style.display=isCreate?'none':'block';
-  document.getElementById('tab-create-btn').classList.toggle('active',isCreate);
-  document.getElementById('tab-join-btn').classList.toggle('active',!isCreate);
-  document.getElementById('jr-err')?.classList.remove('show');
-  document.getElementById('jrpw-inp')?.classList.remove('error');
-}
-
-function escAttr(t){return esc(t).replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
-
-function pickEmo(btn,e){window.selEmo=e;document.querySelectorAll('#s-auth .egrid .emo').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');validate();}
-function pickRoomEmo(btn,e){window.selRoomEmo=e;document.querySelectorAll('#modal .egrid .emo').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
-function pickColor(btn,c){window.selColor=c;document.querySelectorAll('.clr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
 
 // PERSONAL ACCENT COLOR (per user, per room — never shared with roommates)
 function accentKey(){return "roomAccents_"+(window.me?window.me.id:"anon");}
@@ -431,13 +566,163 @@ document.addEventListener('click',(e)=>{
   const wrap=document.getElementById('accent-wrap');
   if(wrap&&!wrap.contains(e.target)) document.getElementById('accent-popover')?.classList.remove('show');
 });
-function validate(){document.getElementById('join-btn').disabled=!(document.getElementById('name-inp').value.trim()&&window.selEmo);}
+
+function openEmojiPicker(target){
+  window.emoTarget=target;
+  document.getElementById('ep-search').value="";
+  const rec=getRecentEmojis();
+  window.activeEmoCat=rec.length>0?"recent":"smileys";
+  renderEmojiTabs();
+  renderEmojiGrid();
+  document.getElementById('emo-picker-bg').classList.add('show');
+}
+function closeEmojiPicker(){
+  document.getElementById('emo-picker-bg').classList.remove('show');
+}
+function renderEmojiTabs(){
+  const tabs=document.getElementById('ep-tabs');
+  tabs.innerHTML="";
+  EMOJI_CATEGORIES.forEach(cat=>{
+    const b=document.createElement('button');
+    b.type="button";
+    b.className="ep-tab"+(window.activeEmoCat===cat.id?" active":"");
+    b.textContent=cat.icon;
+    b.title=cat.label;
+    b.onclick=()=>{
+      window.activeEmoCat=cat.id;
+      document.getElementById('ep-search').value="";
+      renderEmojiTabs();
+      renderEmojiGrid();
+      const sec=document.getElementById('ep-sec-'+cat.id);
+      if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+    };
+    tabs.appendChild(b);
+  });
+}
+function renderEmojiGrid(){
+  const body=document.getElementById('ep-body');
+  const q=(document.getElementById('ep-search').value||"").trim().toLowerCase();
+  body.innerHTML="";
+  EMOJI_CATEGORIES[0].emojis=getRecentEmojis();
+
+  // If user typed/pasted an actual emoji in the search bar, let them pick it directly
+  if(q && /\p{Extended_Pictographic}/u.test(q)){
+    const customSec=document.createElement('div');
+    const title=document.createElement('div');
+    title.className='ep-cat-title';
+    title.textContent='Typed Emoji';
+    const grid=document.createElement('div');
+    grid.className='ep-grid';
+    const chars=[...q].filter(ch=>/\p{Extended_Pictographic}/u.test(ch));
+    [...new Set(chars)].forEach(e=>{
+      const btn=document.createElement('button');
+      btn.type="button"; btn.className='ep-item'; btn.textContent=e;
+      btn.onclick=()=>selectEmojiFromPicker(e);
+      grid.appendChild(btn);
+    });
+    customSec.appendChild(title);
+    customSec.appendChild(grid);
+    body.appendChild(customSec);
+  }
+
+  EMOJI_CATEGORIES.forEach(cat=>{
+    if(cat.id==="recent"&&cat.emojis.length===0) return;
+    if(q && !cat.label.toLowerCase().includes(q) && !(cat.keywords||"").includes(q)) return;
+    const sec=document.createElement('div');
+    sec.id='ep-sec-'+cat.id;
+    const title=document.createElement('div');
+    title.className='ep-cat-title';
+    title.textContent=cat.label;
+    const grid=document.createElement('div');
+    grid.className='ep-grid';
+    cat.emojis.forEach(e=>{
+      const btn=document.createElement('button');
+      btn.type="button";
+      btn.className='ep-item';
+      btn.textContent=e;
+      btn.onclick=()=>selectEmojiFromPicker(e);
+      grid.appendChild(btn);
+    });
+    sec.appendChild(title);
+    sec.appendChild(grid);
+    body.appendChild(sec);
+  });
+
+  if(!body.children.length){
+    body.innerHTML='<div style="text-align:center;color:#666;padding:30px 10px;font-size:13px;">No matching category found. Tip: you can also type any emoji directly in the box above!</div>';
+  }
+}
+function selectEmojiFromPicker(e){
+  saveRecentEmoji(e);
+  if(window.emoTarget==="auth"){
+    window.selEmo=e;
+    updateAuthEmoUI();
+    validate();
+  } else if(window.emoTarget==="room"){
+    window.selRoomEmo=e;
+    updateRoomEmoUI();
+    validateRoom();
+  }
+  closeEmojiPicker();
+}
+
+function pickColor(btn,c){window.selColor=c;document.querySelectorAll('.clr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function validate(){document.getElementById('join-btn').disabled=!document.getElementById('name-inp').value.trim();}
+function validateRoom(){
+  const hasName=!!document.getElementById('rname-inp')?.value.trim();
+  const hasEmo=!!window.selRoomEmo;
+  const btn=document.getElementById('create-room-btn');
+  if(btn) btn.disabled=!(hasName&&hasEmo);
+}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));document.getElementById(id).classList.add('show');}
 function esc(t){const d=document.createElement("div");d.textContent=t||"";return d.innerHTML;}
 function fmtTime(ts){if(!ts)return"";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function fmtDate(ts){if(!ts)return"";const d=ts.toDate?ts.toDate():new Date(ts);const t=new Date();if(d.toDateString()===t.toDateString())return"Today";const y=new Date(t);y.setDate(y.getDate()-1);if(d.toDateString()===y.toDateString())return"Yesterday";return d.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'});}
 function isAdmin(){return window.me&&window.me.name.toLowerCase()==="clauden";}
 function playPing(){try{const a=new AudioContext();const o=a.createOscillator();const g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.setValueAtTime(880,a.currentTime);o.frequency.exponentialRampToValueAtTime(440,a.currentTime+0.1);g.gain.setValueAtTime(0.3,a.currentTime);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+0.3);o.start();o.stop(a.currentTime+0.3);}catch(e){}}
+
+// NOTIFICATIONS
+function updateNotifBtn(){
+  const btn=document.getElementById('notif-btn');
+  if(!btn) return;
+  if(!("Notification" in window)){btn.style.display="none";return;}
+  const muted=localStorage.getItem("notif_off")==="1";
+  const granted=Notification.permission==="granted";
+  btn.textContent=(granted&&!muted)?"🔔":"🔕";
+  btn.title=(granted&&!muted)?"Notifications ON (tap to mute)":"Notifications OFF (tap to enable)";
+}
+async function toggleNotifications(){
+  if(!("Notification" in window)){alert("Notifications are not supported in this browser.");return;}
+  if(Notification.permission==="denied"){
+    alert("Notifications are blocked by your browser settings. Please allow notifications for this site.");
+    return;
+  }
+  if(Notification.permission!=="granted"){
+    const perm=await Notification.requestPermission();
+    if(perm==="granted") localStorage.removeItem("notif_off");
+  } else {
+    const muted=localStorage.getItem("notif_off")==="1";
+    if(muted) localStorage.removeItem("notif_off");
+    else localStorage.setItem("notif_off","1");
+  }
+  updateNotifBtn();
+}
+function notifyIncoming(title, body, roomObj){
+  if(!("Notification" in window)) return;
+  if(Notification.permission!=="granted"||localStorage.getItem("notif_off")==="1") return;
+  try{
+    const opts={body:body||"New message",icon:"icon-512.png",tag:roomObj?.id||"chat-msg",renotify:true};
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+      navigator.serviceWorker.ready.then(reg=>reg.showNotification(title,opts)).catch(()=>{
+        const n=new Notification(title,opts);
+        n.onclick=()=>{window.focus();if(roomObj&&window.tryOpenRoom)window.tryOpenRoom(roomObj);n.close();};
+      });
+    } else {
+      const n=new Notification(title,opts);
+      n.onclick=()=>{window.focus();if(roomObj&&window.tryOpenRoom)window.tryOpenRoom(roomObj);n.close();};
+    }
+  }catch(e){}
+}
 
 // REPLY
 function cancelReply(){window.replyTo=null;document.getElementById('reply-bar').classList.remove('show');}
@@ -468,7 +753,8 @@ document.addEventListener('click',()=>document.getElementById('ctx-menu').classL
 
 function ctxReply(){
   const m=window.ctxMsg; if(!m) return;
-  setReply(m.id, m.name, m.text||"🎵 audio");
+  const preview=m.text||m.caption||(m.type==="image"?"🖼️ Image":"🎵 Voice note");
+  setReply(m.id, m.name, preview);
 }
 function ctxReact(){
   const m=window.ctxMsg; if(!m) return;
@@ -476,8 +762,9 @@ function ctxReact(){
 }
 function ctxPin(){
   const m=window.ctxMsg; if(!m||!window.room) return;
-  window._updateDoc(window.room.id,{pinnedMsg:m.text||"🎵 Voice note",pinnedId:m.id});
-  showPinBar(m.text||"🎵 Voice note", m.id);
+  const pinText=m.text||m.caption||(m.type==="image"?"🖼️ Image":"🎵 Voice note");
+  window._updateDoc(window.room.id,{pinnedMsg:pinText,pinnedId:m.id});
+  showPinBar(pinText, m.id);
 }
 function ctxDelete(){
   const m=window.ctxMsg; if(!m) return;
@@ -485,8 +772,9 @@ function ctxDelete(){
   window._deleteMsg(m.id);
 }
 function ctxKick(){
+  if(!isAdmin()) return;
   const m=window.ctxMsg; if(!m) return;
-  if(!confirm("Kick "+m.name+"?")) return;
+  if(!confirm("Kick "+m.name+" from this room?")) return;
   window._kickUser(m.uid, m.name);
 }
 
@@ -607,36 +895,92 @@ const db=getFirestore(initializeApp({
   appId:"1:150208049552:web:d73531b8c3ac0f5a99c315"
 }));
 
-let room=null,unsub=null,typingTimeout=null,presenceInterval=null,typingUnsub=null,presenceUnsub=null;
+let room=null,unsub=null,roomsUnsub=null,userUnsub=null,typingTimeout=null,presenceInterval=null,typingUnsub=null,presenceUnsub=null;
 window.currentRoomId=null;
 const REACTIONS=["👍","❤️","😂","😮","😢","🔥"];
 
 // Expose firebase ops to global scope for inline handlers
 window.room=null;
+window._allRooms=[];
 window._updateDoc=async(roomId,data)=>await updateDoc(doc(db,"rooms",roomId),data);
 window._deleteMsg=async(msgId)=>{ if(!room) return; await deleteDoc(doc(db,"rooms",room.id,"messages",msgId)); };
-window._addMsg=async(data)=>{ if(!room) return; await addDoc(collection(db,"rooms",room.id,"messages"),{...data,at:serverTimestamp()}); await updateDoc(doc(db,"rooms",room.id),{lastMsg:`${data.emoji} ${data.name}: ${data.type==="audio"?"🎵 Voice note":data.type==="image"?"🖼️ Image":(data.text||"").slice(0,40)}`,lastAt:serverTimestamp()}); };
-window._kickUser=async(uid,name)=>{
-  const s=await getDocs(query(collection(db,"users"),where("uid","==",uid)));
-  s.forEach(async d=>await deleteDoc(doc(db,"users",d.id)));
-  await deleteDoc(doc(db,"presence",uid)).catch(()=>{});
-  // Post system message in current room
-  const currentRoom=window.room;
-  if(currentRoom){
-    await addDoc(collection(db,"rooms",currentRoom.id,"messages"),{
-      type:"system",
-      text:"👢 "+name+" was kicked from the room",
-      uid:"system", name:"system", emoji:"",
-      at:serverTimestamp(), reactions:{}
-    });
-  }
+window._addMsg=async(data)=>{
+  if(!room) return;
+  const senderPrefix=(data.emoji?data.emoji+" ":"")+data.name;
+  const preview=`${senderPrefix}: ${data.type==="audio"?"🎵 Voice note":data.type==="image"?(data.caption?"🖼️ "+data.caption.slice(0,35):"🖼️ Image"):(data.text||"").slice(0,40)}`;
+  await addDoc(collection(db,"rooms",room.id,"messages"),{...data,at:serverTimestamp()});
+  await updateDoc(doc(db,"rooms",room.id),{lastMsg:preview,lastSenderId:data.uid,lastAt:serverTimestamp()});
 };
+window._kickUser=async(uid,name)=>{
+  if(!isAdmin()) return;
+  const currentRoom=window.room;
+  if(!currentRoom) return;
+  const rRef=doc(db,"rooms",currentRoom.id);
+  const snap=await getDoc(rRef);
+  if(snap.exists()){
+    const data=snap.data();
+    const kickedUsers={...(data.kickedUsers||{})};
+    kickedUsers[uid]=name;
+    const members=(data.members||[]).filter(m=>m!==uid);
+    await updateDoc(rRef,{kickedUsers,members});
+  }
+  await addDoc(collection(db,"rooms",currentRoom.id,"messages"),{
+    type:"system",
+    text:"👢 "+name+" was kicked from the room",
+    uid:"system", name:"system", emoji:"",
+    at:serverTimestamp(), reactions:{}
+  });
+};
+window.approveRejoin=async(roomId,uid,userName)=>{
+  if(!isAdmin()) return;
+  const rRef=doc(db,"rooms",roomId);
+  const snap=await getDoc(rRef);
+  if(!snap.exists()) return;
+  const data=snap.data();
+  const kickedUsers={...(data.kickedUsers||{})};
+  delete kickedUsers[uid];
+  const rejoinRequests={...(data.rejoinRequests||{})};
+  delete rejoinRequests[uid];
+  const members=Array.from(new Set([...(data.members||[]),uid]));
+  await updateDoc(rRef,{kickedUsers,rejoinRequests,members});
+  await addDoc(collection(db,"rooms",roomId,"messages"),{
+    type:"system",
+    text:"✅ Admin allowed "+userName+" back into the room",
+    uid:"system", name:"system", emoji:"",
+    at:serverTimestamp(), reactions:{}
+  });
+};
+
+function cleanupAllListeners(){
+  stopPresence();
+  if(unsub){unsub();unsub=null;}
+  if(roomsUnsub){roomsUnsub();roomsUnsub=null;}
+  if(userUnsub){userUnsub();userUnsub=null;}
+  if(typingUnsub){typingUnsub();typingUnsub=null;}
+  if(presenceUnsub){presenceUnsub();presenceUnsub=null;}
+}
+
+function listenUserStatus(){
+  if(!window.me) return;
+  if(userUnsub){userUnsub();userUnsub=null;}
+  userUnsub=onSnapshot(query(collection(db,"users"),where("uid","==",window.me.id)),snap=>{
+    if(snap.metadata.fromCache) return;
+    if(snap.empty&&window.me){
+      cleanupAllListeners();
+      localStorage.removeItem("cu");
+      window.me=null; room=null; window.room=null; window.currentRoomId=null;
+      show('s-auth');
+      alert("You have been kicked from the chat.");
+    }
+  });
+}
 
 // PRESENCE
 function startPresence(){
   if(!window.me) return;
   const ref=doc(db,"presence",window.me.id);
   setDoc(ref,{name:window.me.name,emoji:window.me.emoji,uid:window.me.id,online:true,lastSeen:serverTimestamp()});
+  if(presenceInterval) clearInterval(presenceInterval);
   presenceInterval=setInterval(()=>setDoc(ref,{name:window.me.name,emoji:window.me.emoji,uid:window.me.id,online:true,lastSeen:serverTimestamp()},{merge:true}),30000);
   window.addEventListener("beforeunload",()=>setDoc(ref,{online:false,lastSeen:serverTimestamp()},{merge:true}));
 }
@@ -659,27 +1003,38 @@ window.joinChat=async()=>{
   const name=document.getElementById('name-inp').value.trim();
   const btn=document.getElementById('join-btn');
   btn.disabled=true; btn.textContent="Checking...";
+  if("Notification" in window && Notification.permission==="default"){
+    Notification.requestPermission().then(()=>updateNotifBtn()).catch(()=>{});
+  }
   const existingUid=localStorage.getItem("cu_uid");
   const snap=await getDocs(query(collection(db,"users"),where("name","==",name.toLowerCase())));
   if(!snap.empty){
     const match=snap.docs.find(d=>d.data().uid===existingUid);
-    if(match){window.me={name,emoji:window.selEmo||"😎",id:existingUid};localStorage.setItem("cu",JSON.stringify(window.me));enterApp();return;}
+    if(match){
+      window.me={name,emoji:window.selEmo||"",id:existingUid};
+      localStorage.setItem("cu",JSON.stringify(window.me));
+      btn.disabled=false; btn.textContent="Enter Chat 🚀";
+      enterApp();
+      return;
+    }
     document.getElementById("name-inp").classList.add("error");
     document.getElementById("name-err").classList.add("show");
     btn.disabled=false; btn.textContent="Enter Chat 🚀"; return;
   }
   const uid=existingUid||crypto.randomUUID();
-  window.me={name,emoji:window.selEmo||"😎",id:uid};
+  window.me={name,emoji:window.selEmo||"",id:uid};
   await setDoc(doc(db,"users",uid),{name:name.toLowerCase(),uid,joinedAt:serverTimestamp()});
   localStorage.setItem("cu",JSON.stringify(window.me));
   localStorage.setItem("cu_uid",uid);
+  btn.disabled=false; btn.textContent="Enter Chat 🚀";
   enterApp();
 };
 
 async function enterApp(){
-  document.getElementById('chip-label').textContent=window.me.emoji+" "+window.me.name;
-  document.getElementById('admin-btn').style.display=isAdmin()?'block':'none';
-  show('s-rooms'); listenRooms(); startPresence();
+  document.getElementById('chip-label').textContent=(window.me.emoji?window.me.emoji+" ":"")+window.me.name;
+  document.getElementById('admin-btn').style.display=isAdmin()?"flex":"none";
+  updateNotifBtn();
+  show('s-rooms'); listenRooms(); startPresence(); listenUserStatus();
   const ref=doc(db,"rooms","general");
   const s=await getDoc(ref);
   if(!s.exists()) await setDoc(ref,{name:"General",emoji:"💬",color:"#e8c547",lastMsg:"",lastAt:serverTimestamp(),count:0,password:"",createdBy:window.me.id});
@@ -699,79 +1054,174 @@ function updateBadges(){
   });
 }
 
-window._allRooms=[];
 function listenRooms(){
-  onSnapshot(query(collection(db,"rooms"),orderBy("lastAt","desc")),snap=>{
-    window._allRooms=snap.docs.map(d=>({id:d.id,...d.data()}));
+  if(roomsUnsub){roomsUnsub();roomsUnsub=null;}
+  let firstRoomsLoad=true;
+  const prevRoomState=new Map();
+
+  roomsUnsub=onSnapshot(query(collection(db,"rooms"),orderBy("lastAt","desc")),snap=>{
+    snap.docChanges().forEach(ch=>{
+      const r={id:ch.doc.id,...ch.doc.data()};
+      if(ch.type==="removed"){
+        removeJoinedRoom(r.id);
+        prevRoomState.delete(r.id);
+        if(window.currentRoomId===r.id){
+          window.goBack();
+        }
+        return;
+      }
+      const prev=prevRoomState.get(r.id);
+      const curAt=r.lastAt?.toMillis?.()||0;
+
+      // Enforce room-level kick in real time
+      if(isUserKickedFromRoom(r)){
+        removeJoinedRoom(r.id);
+        if(window.currentRoomId===r.id){
+          window.goBack();
+          alert(`You were kicked from "${r.name}". You need admin permission to rejoin.`);
+        }
+      }
+
+      // Sync pinned message bar live for the currently open room
+      if(window.currentRoomId===r.id){
+        room=r; window.room=r;
+        showPinBar(r.pinnedMsg||"", r.pinnedId||null);
+      }
+
+      // Detect new message in other joined rooms after initial load
+      if(!firstRoomsLoad && ch.type==="modified" && prev && isJoined(r)){
+        const msgChanged=(curAt>0 && curAt!==prev.lastAt) || (r.lastMsg && r.lastMsg!==prev.lastMsg);
+        const isFromMe=r.lastSenderId ? r.lastSenderId===window.me?.id : (r.lastMsg||"").startsWith((window.me?.emoji||"")+" "+(window.me?.name||"")+":");
+        if(msgChanged && r.lastMsg && !isFromMe && window.currentRoomId!==r.id){
+          const stored=JSON.parse(localStorage.getItem("unread")||"{}");
+          stored[r.id]=(stored[r.id]||0)+1;
+          localStorage.setItem("unread",JSON.stringify(stored));
+          playPing();
+          notifyIncoming(`${r.emoji||"💬"} ${r.name}`, r.lastMsg, r);
+        }
+      }
+
+      if(curAt>0 || !prev){
+        prevRoomState.set(r.id,{lastAt:curAt,lastMsg:r.lastMsg||""});
+      }
+    });
+    firstRoomsLoad=false;
+
+    window._allRooms=[];
+    snap.forEach(d=>window._allRooms.push({id:d.id,...d.data()}));
+    if(document.getElementById('admin-bg')?.style.display==='flex'){
+      renderAdminRoomList();
+    }
     renderRoomList();
   });
 }
 
 function renderRoomList(){
   const list=document.getElementById('rlist'); list.innerHTML="";
-  window._allRooms.filter(r=>isJoined(r.id)).forEach(r=>{
-    const el=document.createElement("div"); el.className="ritem";
-    el.dataset.rid=r.id;
-    const stored=JSON.parse(localStorage.getItem("unread")||"{}");
-    const unread=stored[r.id]||0;
-    el.innerHTML=`<div class="rico">${r.emoji||"💬"}</div><div class="rmeta"><div class="rname">${esc(r.name)}</div><div class="rlast">${esc(r.lastMsg||"No messages yet")}</div></div>${(unread>0&&window.currentRoomId!==r.id)?`<div class="rbadge">${unread}</div>`:""}`;
-    el.onclick=()=>openRoom(r); list.appendChild(el);
-  });
-  // Keep the admin panel's room list in sync if it's currently open
-  if(document.getElementById('admin-bg')?.style.display==='flex') renderAdminRoomList();
-}
-
-// ADMIN — permanently delete a room and all its messages/typing data
-window.deleteRoomCompletely=async function(roomId,roomName){
-  if(roomId==="general") return;
-  if(!confirm('Delete room "'+roomName+'" completely? This cannot be undone.')) return;
-  const msgsSnap=await getDocs(collection(db,"rooms",roomId,"messages"));
-  for(const d of msgsSnap.docs) await deleteDoc(d.ref);
-  const typingSnap=await getDocs(collection(db,"rooms",roomId,"typing"));
-  for(const d of typingSnap.docs) await deleteDoc(d.ref);
-  await deleteDoc(doc(db,"rooms",roomId));
-  // If the deleted room was the one currently open, go back to the room list
-  if(window.currentRoomId===roomId) window.goBack();
-};
-
-// JOIN ROOM BY NAME (used from the "+" menu's Join tab)
-window.joinRoomByName=function(){
-  const n=document.getElementById('jrname-inp').value.trim();
-  const pw=document.getElementById('jrpw-inp').value.trim();
-  const errEl=document.getElementById('jr-err');
-  const pwInp=document.getElementById('jrpw-inp');
-  errEl.classList.remove('show'); pwInp.classList.remove('error');
-  if(!n) return;
-  const match=(window._allRooms||[]).find(r=>r.name.toLowerCase()===n.toLowerCase());
-  if(!match||(match.password||"")!==pw){
-    errEl.classList.add('show'); pwInp.classList.add('error');
+  const stored=JSON.parse(localStorage.getItem("unread")||"{}");
+  const joined=window._allRooms.filter(r=>isJoined(r));
+  if(joined.length===0){
+    list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:40px 20px;font-size:13px;">No rooms yet.<br>Tap <b>+ Room</b> to create or join one!</div>`;
     return;
   }
+  joined.forEach(r=>{
+    const hasLock=r.password&&r.password.length>0;
+    const el=document.createElement("div"); el.className="ritem";
+    el.dataset.rid=r.id;
+    const unread=stored[r.id]||0;
+    el.innerHTML=`<div class="rico">${r.emoji||"💬"}${hasLock?'<span class="lockbadge">🔒</span>':''}</div><div class="rmeta"><div class="rname">${esc(r.name)}</div><div class="rlast">${esc(r.lastMsg||"No messages yet")}</div></div>${(unread>0&&window.currentRoomId!==r.id)?`<div class="rbadge">${unread}</div>`:""}`;
+    // Already-joined rooms open directly without demanding a password again
+    el.onclick=()=>openRoom(r);
+    list.appendChild(el);
+  });
+}
+
+// DELETE ROOM COMPLETELY (admin only)
+window.deleteRoomCompletely=async function(roomId,roomName){
+  if(!isAdmin()) return;
+  if(!confirm(`Permanently delete "${roomName}" and all its messages? This cannot be undone.`)) return;
+  const msgsSnap=await getDocs(collection(db,"rooms",roomId,"messages"));
+  await Promise.all(msgsSnap.docs.map(d=>deleteDoc(doc(db,"rooms",roomId,"messages",d.id))));
+  const typSnap=await getDocs(collection(db,"rooms",roomId,"typing"));
+  await Promise.all(typSnap.docs.map(d=>deleteDoc(doc(db,"rooms",roomId,"typing",d.id))));
+  await deleteDoc(doc(db,"rooms",roomId));
+  removeJoinedRoom(roomId);
+  if(window.currentRoomId===roomId){ window.goBack(); }
+  renderAdminRoomList();
+};
+
+// JOIN ROOM BY NAME + PASSWORD (does not require password if already joined; requires admin permission if kicked)
+window.joinRoomByName=async function(){
+  const nameVal=document.getElementById('join-name-inp').value.trim();
+  const pwVal=document.getElementById('join-pw-inp').value.trim();
+  const errEl=document.getElementById('join-err');
+  errEl.classList.remove('show');
+  if(!nameVal) return;
+
+  const btn=document.getElementById('join-room-btn');
+  btn.disabled=true; btn.textContent="Searching...";
+
+  const match=window._allRooms.find(r=>r.name.toLowerCase()===nameVal.toLowerCase());
+
+  if(!match){
+    errEl.style.color="#e8476a";
+    errEl.textContent="No room found with that name.";
+    errEl.classList.add('show');
+    btn.disabled=false; btn.textContent="Join Room 🔑";
+    return;
+  }
+
+  // If user was kicked from this room, require admin permission before they can rejoin
+  if(isUserKickedFromRoom(match)){
+    const rRef=doc(db,"rooms",match.id);
+    const rejoinRequests={...(match.rejoinRequests||{})};
+    rejoinRequests[window.me.id]=window.me.name;
+    await updateDoc(rRef,{rejoinRequests}).catch(()=>{});
+    errEl.style.color="#e8c547";
+    errEl.textContent="You were kicked from this room. A rejoin request has been sent to the admin for permission.";
+    errEl.classList.add('show');
+    btn.disabled=false; btn.textContent="Join Room 🔑";
+    return;
+  }
+
+  // Only check password if user is not already in the room
+  if(!isJoined(match) && match.password && match.password.length>0 && match.password!==pwVal){
+    errEl.style.color="#e8476a";
+    errEl.textContent=pwVal?"Wrong password for this room.":"This room requires a password.";
+    errEl.classList.add('show');
+    btn.disabled=false; btn.textContent="Join Room 🔑";
+    return;
+  }
+
   addJoinedRoom(match.id);
-  document.getElementById('jrname-inp').value="";
-  document.getElementById('jrpw-inp').value="";
-  closeRoomModal();
+  const members=Array.from(new Set([...(match.members||[]),window.me.id]));
+  await updateDoc(doc(db,"rooms",match.id),{members}).catch(()=>{});
   renderRoomList();
+  btn.disabled=false; btn.textContent="Join Room 🔑";
+  closeRoomModal();
   openRoom(match);
 };
 
 window.createRoom=async()=>{
-  const n=document.getElementById('rname-inp').value.trim(); if(!n) return;
+  const n=document.getElementById('rname-inp').value.trim();
+  if(!n||!window.selRoomEmo) return;
   const pw=document.getElementById('rpw-inp').value.trim();
-  const ref=await addDoc(collection(db,"rooms"),{name:n,emoji:window.selRoomEmo||"💬",color:window.selColor||"#e8c547",lastMsg:"",lastAt:serverTimestamp(),count:0,password:pw,createdBy:window.me.id});
+  const ref=await addDoc(collection(db,"rooms"),{name:n,emoji:window.selRoomEmo,color:window.selColor||"#e8c547",lastMsg:"",lastAt:serverTimestamp(),count:0,password:pw,createdBy:window.me.id,members:[window.me.id],kickedUsers:{}});
   addJoinedRoom(ref.id);
   document.getElementById('rname-inp').value=""; document.getElementById('rpw-inp').value="";
+  window.selRoomEmo=""; updateRoomEmoUI(); validateRoom();
   closeRoomModal();
-  renderRoomList();
 };
 
 // OPEN ROOM
 function openRoom(r){
   room=r; window.room=r;
   window.currentRoomId=r.id;
+  // Use personal accent color if set, otherwise fall back to room default
   const accents=JSON.parse(localStorage.getItem(accentKey())||"{}");
   window.roomColor=accents[r.id]||r.color||"#e8c547";
   updateAccentSwatch();
+  document.getElementById('accent-popover').classList.remove('show');
   document.getElementById('chat-icon').textContent=r.emoji||"💬";
   document.getElementById('chat-name').textContent=r.name;
   document.getElementById('msgbox').innerHTML="";
@@ -784,6 +1234,7 @@ function openRoom(r){
   const stored=JSON.parse(localStorage.getItem("unread")||"{}");
   delete stored[r.id];
   localStorage.setItem("unread", JSON.stringify(stored));
+  updateBadges();
   updateDoc(doc(db,"rooms",r.id),{count:0}).catch(()=>{});
   listenPresence();
   listenTyping(r.id);
@@ -844,10 +1295,9 @@ function openRoom(r){
       // Content
       let contentHtml="";
       if(msg.type==="image"){
-        contentHtml=`<img src="${msg.imageData}" data-caption="${escAttr(msg.caption||"")}" class="img-bubble" onclick="openImgViewer(this.src,this.dataset.caption)">${msg.caption?`<div class="img-caption-inline">${esc(msg.caption)}</div>`:""}`;
+        const cap=msg.caption?`<div class="img-caption-inline">${esc(msg.caption)}</div>`:"";
+        contentHtml=`<img src="${msg.imageData}" data-caption="${esc(msg.caption||'')}" class="img-bubble" onclick="openImgViewer(this.src,this.dataset.caption)">${cap}`;
       } else if(msg.type==="audio"){
-        const audioBubble=buildAudioBubble(msg.audioData, msg.id);
-        // will append after
         contentHtml="__AUDIO__";
       } else {
         contentHtml=esc(msg.text||"");
@@ -857,8 +1307,8 @@ function openRoom(r){
       const bubbleStyle=isMe?`style="background:${rc};color:${rc==='#ffffff'?'#000':'#000'}"` : "";
 
       wrap.innerHTML=`
-        ${!isMe?`<div class="msender">${msg.emoji||""} <b>${esc(msg.name||"?")}</b>${isClauden?' 👑':''}</div>`:`<div style="text-align:right;font-size:11px;color:#555;margin-bottom:2px;">${isClauden?'👑 ':''}${esc(window.me.name)}</div>`}
-        <div class="bubble" ${bubbleStyle} oncontextmenu="showCtx(event,${JSON.stringify({id:msg.id,uid:msg.uid,name:msg.name,text:msg.text||"",type:msg.type}).replace(/"/g,'&quot;')})" onclick="showCtx(event,${JSON.stringify({id:msg.id,uid:msg.uid,name:msg.name,text:msg.text||"",type:msg.type}).replace(/"/g,'&quot;')})">
+        ${!isMe?`<div class="msender">${msg.emoji?msg.emoji+" ":""}<b>${esc(msg.name||"?")}</b>${isClauden?' 👑':''}</div>`:`<div style="text-align:right;font-size:11px;color:#555;margin-bottom:2px;">${isClauden?'👑 ':''}${esc(window.me.name)}</div>`}
+        <div class="bubble" ${bubbleStyle} oncontextmenu="showCtx(event,${JSON.stringify({id:msg.id,uid:msg.uid,name:msg.name,text:msg.text||"",caption:msg.caption||"",type:msg.type}).replace(/"/g,'&quot;')})" onclick="showCtx(event,${JSON.stringify({id:msg.id,uid:msg.uid,name:msg.name,text:msg.text||"",caption:msg.caption||"",type:msg.type}).replace(/"/g,'&quot;')})">
           ${replyHtml}
           ${contentHtml==="__AUDIO__"?"<div id='audio-slot-"+msg.id+"'></div>":contentHtml}
         </div>
@@ -877,15 +1327,10 @@ function openRoom(r){
 
       if(!firstLoad&&!isMe){
         playPing();
-        // Increment badge - this fires on every client that receives the message
-        // Each client that is NOT inside this room increments their view of the count
-        // But since count is shared in Firestore, we use a different approach:
-        // We store unread counts locally per user
-        const stored = JSON.parse(localStorage.getItem("unread")||"{}");
-        stored[room.id] = (stored[room.id]||0) + 1;
-        localStorage.setItem("unread", JSON.stringify(stored));
-        // Update badge display immediately
-        updateBadges();
+        if(document.hidden){
+          const bodyText=`${msg.emoji?msg.emoji+" ":""}${msg.name}: ${msg.type==="audio"?"🎵 Voice note":msg.type==="image"?(msg.caption?"🖼️ "+msg.caption:"🖼️ Image"):(msg.text||"")}`;
+          notifyIncoming(`${room.emoji||"💬"} ${room.name}`, bodyText, room);
+        }
       }
     });
 
@@ -922,14 +1367,16 @@ window.onTyping=function(){
 };
 
 // IMAGE
+window.pendingImageData=null;
 window.sendImage=async function(input){
   const file=input.files[0]; if(!file||!room) return;
   if(file.size>50*1024*1024){alert("Max 50MB!");return;}
-  // Compress image before sending
+  input.value="";
+  // Compress image then show caption modal
   const reader=new FileReader();
-  reader.onload=async(e)=>{
+  reader.onload=(e)=>{
     const img=new Image();
-    img.onload=async()=>{
+    img.onload=()=>{
       const canvas=document.createElement('canvas');
       const MAX=1200;
       let w=img.width, h=img.height;
@@ -939,33 +1386,30 @@ window.sendImage=async function(input){
       }
       canvas.width=w; canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-      // Try quality reduction until under 900KB
       let quality=0.85;
       let compressed=canvas.toDataURL('image/jpeg',quality);
       while(compressed.length>900000&&quality>0.3){
         quality-=0.1;
         compressed=canvas.toDataURL('image/jpeg',quality);
       }
-      // Hold the image and ask for a caption before sending
       window.pendingImageData=compressed;
       document.getElementById('imgcap-preview').src=compressed;
       document.getElementById('imgcap-inp').value="";
       document.getElementById('imgcap-bg').style.display='flex';
+      setTimeout(()=>document.getElementById('imgcap-inp').focus(),100);
     };
     img.src=e.target.result;
   };
   reader.readAsDataURL(file);
-  input.value="";
 };
-
 window.confirmSendImage=async function(){
   if(!window.pendingImageData||!room) return;
   const caption=document.getElementById('imgcap-inp').value.trim();
-  const data=window.pendingImageData;
+  const imageData=window.pendingImageData;
   window.pendingImageData=null;
   document.getElementById('imgcap-bg').style.display='none';
   await window._addMsg({
-    type:"image",imageData:data,caption,
+    type:"image",imageData,caption:caption||"",
     uid:window.me.id,name:window.me.name,emoji:window.me.emoji,
     replyTo:window.replyTo||null,reactions:{}
   });
@@ -990,29 +1434,24 @@ window.goBack=()=>{
   if(unsub){unsub();unsub=null;}
   if(typingUnsub){typingUnsub();typingUnsub=null;}
   if(presenceUnsub){presenceUnsub();presenceUnsub=null;}
-  room=null; window.room=null; window.currentRoomId=null; show('s-rooms');
+  room=null; window.room=null; window.currentRoomId=null;
+  updateBadges();
+  show('s-rooms');
 };
 
 window.logout=async()=>{
   if(!confirm("Log out?")) return;
-  stopPresence();
+  cleanupAllListeners();
   localStorage.removeItem("cu");
-  if(unsub){unsub();unsub=null;}
-  if(typingUnsub){typingUnsub();typingUnsub=null;}
-  if(presenceUnsub){presenceUnsub();presenceUnsub=null;}
-  window.me=null; room=null; show('s-auth');
+  window.me=null; room=null; window.room=null; window.currentRoomId=null; show('s-auth');
 };
 
 const saved=JSON.parse(localStorage.getItem("cu")||"null");
 if(saved){window.me=saved;enterApp();}else{show('s-auth');}
 
-// Register service worker (enables "Add to Home Screen" install)
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
-
 </script>
 </body>
 </html>
